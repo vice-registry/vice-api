@@ -16,6 +16,9 @@ type User struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// password
+	Password string `json:"password,omitempty"`
+
 	// username
 	Username string `json:"username,omitempty"`
 }

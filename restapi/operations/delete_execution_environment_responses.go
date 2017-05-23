@@ -29,3 +29,46 @@ func (o *DeleteExecutionEnvironmentBadRequest) WriteResponse(rw http.ResponseWri
 
 	rw.WriteHeader(400)
 }
+
+// DeleteExecutionEnvironmentUnauthorizedCode is the HTTP code returned for type DeleteExecutionEnvironmentUnauthorized
+const DeleteExecutionEnvironmentUnauthorizedCode int = 401
+
+/*DeleteExecutionEnvironmentUnauthorized Authentication information is missing or invalid
+
+swagger:response deleteExecutionEnvironmentUnauthorized
+*/
+type DeleteExecutionEnvironmentUnauthorized struct {
+	/*
+	  Required: true
+	*/
+	WWWAuthenticate string `json:"WWW_Authenticate"`
+}
+
+// NewDeleteExecutionEnvironmentUnauthorized creates DeleteExecutionEnvironmentUnauthorized with default headers values
+func NewDeleteExecutionEnvironmentUnauthorized() *DeleteExecutionEnvironmentUnauthorized {
+	return &DeleteExecutionEnvironmentUnauthorized{}
+}
+
+// WithWWWAuthenticate adds the wWWAuthenticate to the delete execution environment unauthorized response
+func (o *DeleteExecutionEnvironmentUnauthorized) WithWWWAuthenticate(wWWAuthenticate string) *DeleteExecutionEnvironmentUnauthorized {
+	o.WWWAuthenticate = wWWAuthenticate
+	return o
+}
+
+// SetWWWAuthenticate sets the wWWAuthenticate to the delete execution environment unauthorized response
+func (o *DeleteExecutionEnvironmentUnauthorized) SetWWWAuthenticate(wWWAuthenticate string) {
+	o.WWWAuthenticate = wWWAuthenticate
+}
+
+// WriteResponse to the client
+func (o *DeleteExecutionEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header WWW_Authenticate
+
+	wWWAuthenticate := o.WWWAuthenticate
+	if wWWAuthenticate != "" {
+		rw.Header().Set("WWW_Authenticate", wWWAuthenticate)
+	}
+
+	rw.WriteHeader(401)
+}

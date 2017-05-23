@@ -27,7 +27,7 @@ func init() {
     },
     "version": "0.1"
   },
-  "host": "vice.anyops.org",
+  "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
     "/executionenvironment/{executionenvironmentId}": {
@@ -36,10 +36,7 @@ func init() {
         "operationId": "getExecutionEnvironment",
         "security": [
           {
-            "vice_auth": [
-              "import_images",
-              "deploy_images"
-            ]
+            "vice_auth": []
           }
         ],
         "parameters": [
@@ -60,6 +57,9 @@ func init() {
           "400": {
             "description": "Invalid ID supplied"
           },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
           "404": {
             "description": "Execution environment not found"
           }
@@ -70,10 +70,7 @@ func init() {
         "operationId": "deleteExecutionEnvironment",
         "security": [
           {
-            "vice_auth": [
-              "import_images",
-              "deploy_images"
-            ]
+            "vice_auth": []
           }
         ],
         "parameters": [
@@ -87,6 +84,9 @@ func init() {
         "responses": {
           "400": {
             "description": "Invalid ID supplied"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
           }
         }
       }
@@ -97,10 +97,7 @@ func init() {
         "operationId": "findExecutionEnvironment",
         "security": [
           {
-            "vice_auth": [
-              "import_images",
-              "deploy_images"
-            ]
+            "vice_auth": []
           }
         ],
         "parameters": [
@@ -125,6 +122,9 @@ func init() {
               }
             }
           },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
           "default": {
             "description": "Unexpected error",
             "schema": {
@@ -142,10 +142,7 @@ func init() {
         "operationId": "updateExecutionEnvironment",
         "security": [
           {
-            "vice_auth": [
-              "import_images",
-              "deploy_images"
-            ]
+            "vice_auth": []
           }
         ],
         "parameters": [
@@ -161,6 +158,9 @@ func init() {
         "responses": {
           "400": {
             "description": "Invalid ID supplied"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
             "description": "Execution Environment not found"
@@ -179,10 +179,7 @@ func init() {
         "operationId": "createExecutionEnvironment",
         "security": [
           {
-            "vice_auth": [
-              "import_images",
-              "deploy_images"
-            ]
+            "vice_auth": []
           }
         ],
         "parameters": [
@@ -196,6 +193,15 @@ func init() {
           }
         ],
         "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/ExecutionEnvironment"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
           "405": {
             "description": "Invalid input"
           }
@@ -347,7 +353,20 @@ func init() {
         "id": {
           "type": "integer"
         },
+        "password": {
+          "type": "string"
+        },
         "username": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "UnauthorizedError": {
+      "description": "Authentication information is missing or invalid",
+      "headers": {
+        "WWW_Authenticate": {
           "type": "string"
         }
       }
@@ -355,13 +374,7 @@ func init() {
   },
   "securityDefinitions": {
     "vice_auth": {
-      "type": "oauth2",
-      "flow": "implicit",
-      "authorizationUrl": "http://petstore.swagger.io/api/oauth/dialog",
-      "scopes": {
-        "deploy_images": "deploy images into execution environments",
-        "import_images": "import images from execution environments"
-      }
+      "type": "basic"
     }
   }
 }`))

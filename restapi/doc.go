@@ -5,7 +5,7 @@ API endpoint of the ViCE Image Registry: search, deploy, and import virtual envi
 
     Schemes:
       http
-    Host: vice.anyops.org
+    Host: localhost:8080
     BasePath: /v1
     Version: 0.1
     Contact: christopher.hauser@uni-ulm.de

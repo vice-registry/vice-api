@@ -50,8 +50,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 			return middleware.NotImplemented("operation UpdateExecutionEnvironment has not yet been implemented")
 		}),
 
-		ViceAuthAuth: func(token string, scopes []string) (interface{}, error) {
-			return nil, errors.NotImplemented("oauth2 bearer auth (vice_auth) has not yet been implemented")
+		// Applies when the Authorization header is set with the Basic scheme
+		ViceAuthAuth: func(user string, pass string) (interface{}, error) {
+			return nil, errors.NotImplemented("basic auth  (vice_auth) has not yet been implemented")
 		},
 	}
 }
@@ -73,9 +74,9 @@ type ViceAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// ViceAuthAuth registers a function that takes an access token and a collection of required scopes and returns a principal
-	// it performs authentication based on an oauth2 bearer token provided in the request
-	ViceAuthAuth func(string, []string) (interface{}, error)
+	// ViceAuthAuth registers a function that takes username and password and returns a principal
+	// it performs authentication with basic auth
+	ViceAuthAuth func(string, string) (interface{}, error)
 
 	// CreateExecutionEnvironmentHandler sets the operation handler for the create execution environment operation
 	CreateExecutionEnvironmentHandler CreateExecutionEnvironmentHandler
@@ -204,8 +205,8 @@ func (o *ViceAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[
 		switch name {
 
 		case "vice_auth":
-
-			result[name] = security.BearerAuth(scheme.Name, o.ViceAuthAuth)
+			_ = scheme
+			result[name] = security.BasicAuth(o.ViceAuthAuth)
 
 		}
 	}

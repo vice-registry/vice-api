@@ -57,6 +57,49 @@ func (o *FindExecutionEnvironmentOK) WriteResponse(rw http.ResponseWriter, produ
 
 }
 
+// FindExecutionEnvironmentUnauthorizedCode is the HTTP code returned for type FindExecutionEnvironmentUnauthorized
+const FindExecutionEnvironmentUnauthorizedCode int = 401
+
+/*FindExecutionEnvironmentUnauthorized Authentication information is missing or invalid
+
+swagger:response findExecutionEnvironmentUnauthorized
+*/
+type FindExecutionEnvironmentUnauthorized struct {
+	/*
+	  Required: true
+	*/
+	WWWAuthenticate string `json:"WWW_Authenticate"`
+}
+
+// NewFindExecutionEnvironmentUnauthorized creates FindExecutionEnvironmentUnauthorized with default headers values
+func NewFindExecutionEnvironmentUnauthorized() *FindExecutionEnvironmentUnauthorized {
+	return &FindExecutionEnvironmentUnauthorized{}
+}
+
+// WithWWWAuthenticate adds the wWWAuthenticate to the find execution environment unauthorized response
+func (o *FindExecutionEnvironmentUnauthorized) WithWWWAuthenticate(wWWAuthenticate string) *FindExecutionEnvironmentUnauthorized {
+	o.WWWAuthenticate = wWWAuthenticate
+	return o
+}
+
+// SetWWWAuthenticate sets the wWWAuthenticate to the find execution environment unauthorized response
+func (o *FindExecutionEnvironmentUnauthorized) SetWWWAuthenticate(wWWAuthenticate string) {
+	o.WWWAuthenticate = wWWAuthenticate
+}
+
+// WriteResponse to the client
+func (o *FindExecutionEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header WWW_Authenticate
+
+	wWWAuthenticate := o.WWWAuthenticate
+	if wWWAuthenticate != "" {
+		rw.Header().Set("WWW_Authenticate", wWWAuthenticate)
+	}
+
+	rw.WriteHeader(401)
+}
+
 /*FindExecutionEnvironmentDefault Unexpected error
 
 swagger:response findExecutionEnvironmentDefault

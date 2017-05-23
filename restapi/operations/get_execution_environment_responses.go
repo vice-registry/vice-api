@@ -75,6 +75,49 @@ func (o *GetExecutionEnvironmentBadRequest) WriteResponse(rw http.ResponseWriter
 	rw.WriteHeader(400)
 }
 
+// GetExecutionEnvironmentUnauthorizedCode is the HTTP code returned for type GetExecutionEnvironmentUnauthorized
+const GetExecutionEnvironmentUnauthorizedCode int = 401
+
+/*GetExecutionEnvironmentUnauthorized Authentication information is missing or invalid
+
+swagger:response getExecutionEnvironmentUnauthorized
+*/
+type GetExecutionEnvironmentUnauthorized struct {
+	/*
+	  Required: true
+	*/
+	WWWAuthenticate string `json:"WWW_Authenticate"`
+}
+
+// NewGetExecutionEnvironmentUnauthorized creates GetExecutionEnvironmentUnauthorized with default headers values
+func NewGetExecutionEnvironmentUnauthorized() *GetExecutionEnvironmentUnauthorized {
+	return &GetExecutionEnvironmentUnauthorized{}
+}
+
+// WithWWWAuthenticate adds the wWWAuthenticate to the get execution environment unauthorized response
+func (o *GetExecutionEnvironmentUnauthorized) WithWWWAuthenticate(wWWAuthenticate string) *GetExecutionEnvironmentUnauthorized {
+	o.WWWAuthenticate = wWWAuthenticate
+	return o
+}
+
+// SetWWWAuthenticate sets the wWWAuthenticate to the get execution environment unauthorized response
+func (o *GetExecutionEnvironmentUnauthorized) SetWWWAuthenticate(wWWAuthenticate string) {
+	o.WWWAuthenticate = wWWAuthenticate
+}
+
+// WriteResponse to the client
+func (o *GetExecutionEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header WWW_Authenticate
+
+	wWWAuthenticate := o.WWWAuthenticate
+	if wWWAuthenticate != "" {
+		rw.Header().Set("WWW_Authenticate", wWWAuthenticate)
+	}
+
+	rw.WriteHeader(401)
+}
+
 // GetExecutionEnvironmentNotFoundCode is the HTTP code returned for type GetExecutionEnvironmentNotFound
 const GetExecutionEnvironmentNotFoundCode int = 404
 

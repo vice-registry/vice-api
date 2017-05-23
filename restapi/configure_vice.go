@@ -9,6 +9,7 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
 )
 
@@ -36,18 +37,44 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.ViceAuthAuth = func(token string, scopes []string) (interface{}, error) {
-		return nil, errors.NotImplemented("oauth2 bearer auth (vice_auth) has not yet been implemented")
+	var executionEnvironments = make([]*models.ExecutionEnvironment, 1)
+	var credentials = make([]*models.Credentials, 1)
+	//var images = make([]*models.Image, 1)
+	var managementLayers = make([]*models.ManagementLayer, 1)
+	var runtimeTechnologies = make([]*models.RuntimeTechnology, 1)
+	var users = make([]*models.User, 1)
+
+	users[0] = &models.User{1, "geheim", "user"}
+	credentials[0] = &models.Credentials{"endpoint", 1, "pass", "user"}
+	managementLayers[0] = &models.ManagementLayer{"OpenStack", "cloudcomputing", "Kilo"}
+	runtimeTechnologies[0] = &models.RuntimeTechnology{"KVM", "virtualmachine", "4.10.13"}
+	executionEnvironments[0] = &models.ExecutionEnvironment{credentials[0], 1, managementLayers[0], runtimeTechnologies[0], users[0]}
+
+	// Applies when the Authorization header is set with the Basic scheme
+	api.ViceAuthAuth = func(user string, pass string) (interface{}, error) {
+		for _, userentry := range users {
+			if user == userentry.Username && pass == userentry.Password {
+				// allow
+				return userentry, nil
+			}
+		}
+		// deny
+		api.Logger("Access attempt with incorrect user credentials.")
+		return nil, errors.Unauthenticated("basic")
 	}
 
 	api.CreateExecutionEnvironmentHandler = operations.CreateExecutionEnvironmentHandlerFunc(func(params operations.CreateExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation .CreateExecutionEnvironment has not yet been implemented")
+		executionEnvironments = append(executionEnvironments, params.Body)
+		return operations.NewCreateExecutionEnvironmentCreated().WithPayload(params.Body)
 	})
 	api.DeleteExecutionEnvironmentHandler = operations.DeleteExecutionEnvironmentHandlerFunc(func(params operations.DeleteExecutionEnvironmentParams, principal interface{}) middleware.Responder {
 		return middleware.NotImplemented("operation .DeleteExecutionEnvironment has not yet been implemented")
 	})
 	api.FindExecutionEnvironmentHandler = operations.FindExecutionEnvironmentHandlerFunc(func(params operations.FindExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation .FindExecutionEnvironment has not yet been implemented")
+		return operations.NewFindExecutionEnvironmentOK().WithPayload(executionEnvironments)
+	})
+	api.FindImagesHandler = operations.FindImagesHandlerFunc(func(params operations.FindImagesParams) middleware.Responder {
+		return middleware.NotImplemented("operation .FindImages has not yet been implemented")
 	})
 	api.GetExecutionEnvironmentHandler = operations.GetExecutionEnvironmentHandlerFunc(func(params operations.GetExecutionEnvironmentParams, principal interface{}) middleware.Responder {
 		return middleware.NotImplemented("operation .GetExecutionEnvironment has not yet been implemented")
