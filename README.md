@@ -9,8 +9,11 @@ If go is installed, the following steps will guide to a running development envi
 
 ```
 cd $YOUR_VICE-API_WORKSPACE
+
 export GOPATH=$(pwd)
+# clone the src repo
 git clone git@omi-gitlab.e-technik.uni-ulm.de:vice/vice-api.git src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+# get dependencies
 (cd src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api;  go get -u -f ./...)
 ```
 
@@ -24,8 +27,9 @@ _ Make sure to have the git repository set up in a GOPATH environment._
 
 ```
 cd $YOUR_VICE-API_WORKSPACE
+
 export GOPATH=$(pwd)
-go build src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+go install omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
 ```
 
 The last command will create the binary `vice-api`.
