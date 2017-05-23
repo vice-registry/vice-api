@@ -5,3 +5,6 @@ command -v swagger >/dev/null 2>&1 || { echo >&2 "Swagger is not installed.  Abo
 export GOPATH=$(cd ../../../../; pwd)
 echo "Selecting gopath as: $GOPATH"
 swagger generate server -A vice-api -f swagger.yaml
+
+# remove generated main.go, we will work with a copy...
+rm cmd/vice-server/main.go -r

@@ -201,6 +201,29 @@ func init() {
           }
         }
       }
+    },
+    "/images": {
+      "get": {
+        "summary": "List available images",
+        "operationId": "findImages",
+        "responses": {
+          "200": {
+            "description": "An array of images.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Image"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

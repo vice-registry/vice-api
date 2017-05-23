@@ -127,6 +127,22 @@ paths:
           - import_images
           - deploy_images   
 
+  /images:
+    get:
+      summary: List available images
+      operationId: findImages
+      responses:
+        200:
+          description: An array of images.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Image'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
 securityDefinitions:
   vice_auth:
     type: oauth2

@@ -40,6 +40,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		FindExecutionEnvironmentHandler: FindExecutionEnvironmentHandlerFunc(func(params FindExecutionEnvironmentParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation FindExecutionEnvironment has not yet been implemented")
 		}),
+		FindImagesHandler: FindImagesHandlerFunc(func(params FindImagesParams) middleware.Responder {
+			return middleware.NotImplemented("operation FindImages has not yet been implemented")
+		}),
 		GetExecutionEnvironmentHandler: GetExecutionEnvironmentHandlerFunc(func(params GetExecutionEnvironmentParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation GetExecutionEnvironment has not yet been implemented")
 		}),
@@ -80,6 +83,8 @@ type ViceAPI struct {
 	DeleteExecutionEnvironmentHandler DeleteExecutionEnvironmentHandler
 	// FindExecutionEnvironmentHandler sets the operation handler for the find execution environment operation
 	FindExecutionEnvironmentHandler FindExecutionEnvironmentHandler
+	// FindImagesHandler sets the operation handler for the find images operation
+	FindImagesHandler FindImagesHandler
 	// GetExecutionEnvironmentHandler sets the operation handler for the get execution environment operation
 	GetExecutionEnvironmentHandler GetExecutionEnvironmentHandler
 	// UpdateExecutionEnvironmentHandler sets the operation handler for the update execution environment operation
@@ -165,6 +170,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.FindExecutionEnvironmentHandler == nil {
 		unregistered = append(unregistered, "FindExecutionEnvironmentHandler")
+	}
+
+	if o.FindImagesHandler == nil {
+		unregistered = append(unregistered, "FindImagesHandler")
 	}
 
 	if o.GetExecutionEnvironmentHandler == nil {
@@ -285,6 +294,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/executionenvironments"] = NewFindExecutionEnvironment(o.context, o.FindExecutionEnvironmentHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/images"] = NewFindImages(o.context, o.FindImagesHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
