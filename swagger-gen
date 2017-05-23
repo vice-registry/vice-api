@@ -1,0 +1,7 @@
+#!/bin/bash
+
+command -v swagger >/dev/null 2>&1 || { echo >&2 "Swagger is not installed.  Aborting."; exit 1; }
+
+export GOPATH=$(cd ../../../../; pwd)
+echo "Selecting gopath as: $GOPATH"
+swagger generate server -A vice-api -f swagger.yaml

@@ -1,0 +1,215 @@
+swagger: '2.0'
+info:
+  title: ViCE Image Registry
+  description: "API endpoint of the ViCE Image Registry: search, deploy, and import virtual environments from supported execution environments like OpenStack, Docker, or bwLehrpool."
+  version: "0.1"
+  contact:
+    name: christopher.hauser@uni-ulm.de
+host: vice.anyops.org
+schemes:
+  - http
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /executionenvironments:
+    get:
+      summary: List by user accessible execution environments
+      operationId: findExecutionEnvironment
+      parameters:
+        - name: filterManagementlayer
+          in: query
+          required: false
+          type: string
+        - name: filterRuntimetechnology
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: An array of accessible execution environments.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ExecutionEnvironment'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - vice_auth:
+          - import_images
+          - deploy_images
+          
+    post:
+      summary: Create a new execution environment for authenticated user
+      operationId: createExecutionEnvironment
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: false
+          schema:
+            $ref: "#/definitions/ExecutionEnvironment"
+      consumes:
+        - application/json
+        - application/xml
+      responses:
+        "405":
+          description: Invalid input
+      security:
+        - vice_auth:
+          - import_images
+          - deploy_images
+
+    put:
+      summary: Update an existing execution environment
+      operationId: updateExecutionEnvironment
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: false
+          schema:
+            $ref: "#/definitions/ExecutionEnvironment"
+      consumes:
+        - application/json
+        - application/xml
+      responses:
+        "405":
+          description: Validation exception
+        "404":
+          description: Execution Environment not found
+        "400":
+          description: Invalid ID supplied
+      security:
+        - vice_auth:
+          - import_images
+          - deploy_images       
+          
+  /executionenvironment/{executionenvironmentId}:
+    get:
+      summary: Get execution environment by id
+      operationId: getExecutionEnvironment
+      parameters:
+        - in: path
+          name: executionenvironmentId
+          required: true
+          type: integer
+      responses:
+        "404":
+          description: Execution environment not found
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/ExecutionEnvironment"
+        "400":
+          description: Invalid ID supplied
+      security:
+        - vice_auth:
+          - import_images
+          - deploy_images    
+
+    delete:
+      summary: Deletes an execution environment
+      description: ""
+      operationId: deleteExecutionEnvironment
+      parameters:
+        - in: path
+          name: executionenvironmentId
+          required: true
+          type: integer
+      responses:
+        "400":
+          description: Invalid ID supplied
+      security:
+        - vice_auth:
+          - import_images
+          - deploy_images   
+
+securityDefinitions:
+  vice_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/api/oauth/dialog
+    flow: implicit
+    scopes:
+      import_images: import images from execution environments
+      deploy_images: deploy images into execution environments
+
+definitions:
+  ExecutionEnvironment:
+    type: object
+    properties:
+      id:
+        type: integer
+      user:
+        $ref: "#/definitions/User"
+      credentials:
+        $ref: "#/definitions/Credentials"
+      runtimetechnology:
+        $ref: "#/definitions/RuntimeTechnology"
+      managementlayer:
+        $ref: "#/definitions/ManagementLayer"
+
+  Credentials:
+    type: object
+    properties:
+      id:
+        type: integer
+      endpoint:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+
+  RuntimeTechnology:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [virtualmachine, container, application]
+      software:
+        type: string
+      version:
+        type: string
+
+  ManagementLayer:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [basic, cloudcomputing, containercluster, jobscheduler]
+      software:
+        type: string
+      version:
+        type: string
+
+  Image:
+    type: object
+    properties:
+      image-type:
+        type: string
+        enum: [implicit, declarative]
+      content-type:
+        type: string
+        enum: [disk-raw, disk-qcow2, disk-vmdk, docker-file, docker-image, packerfile]
+
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
