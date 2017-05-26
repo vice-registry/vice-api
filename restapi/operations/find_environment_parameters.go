@@ -13,18 +13,18 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewFindExecutionEnvironmentParams creates a new FindExecutionEnvironmentParams object
+// NewFindEnvironmentParams creates a new FindEnvironmentParams object
 // with the default values initialized.
-func NewFindExecutionEnvironmentParams() FindExecutionEnvironmentParams {
+func NewFindEnvironmentParams() FindEnvironmentParams {
 	var ()
-	return FindExecutionEnvironmentParams{}
+	return FindEnvironmentParams{}
 }
 
-// FindExecutionEnvironmentParams contains all the bound params for the find execution environment operation
+// FindEnvironmentParams contains all the bound params for the find environment operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters findExecutionEnvironment
-type FindExecutionEnvironmentParams struct {
+// swagger:parameters findEnvironment
+type FindEnvironmentParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request
@@ -41,7 +41,7 @@ type FindExecutionEnvironmentParams struct {
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *FindExecutionEnvironmentParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *FindEnvironmentParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
@@ -63,7 +63,7 @@ func (o *FindExecutionEnvironmentParams) BindRequest(r *http.Request, route *mid
 	return nil
 }
 
-func (o *FindExecutionEnvironmentParams) bindFilterManagementlayer(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *FindEnvironmentParams) bindFilterManagementlayer(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -77,7 +77,7 @@ func (o *FindExecutionEnvironmentParams) bindFilterManagementlayer(rawData []str
 	return nil
 }
 
-func (o *FindExecutionEnvironmentParams) bindFilterRuntimetechnology(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *FindEnvironmentParams) bindFilterRuntimetechnology(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

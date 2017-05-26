@@ -14,7 +14,7 @@ import (
 type User struct {
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// password
 	Password string `json:"password,omitempty"`

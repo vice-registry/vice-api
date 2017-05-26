@@ -20,8 +20,17 @@ type Image struct {
 	// content type
 	ContentType string `json:"content-type,omitempty"`
 
+	// id
+	ID string `json:"id,omitempty"`
+
 	// image type
 	ImageType string `json:"image-type,omitempty"`
+
+	// origin environment
+	OriginEnvironment *Environment `json:"originEnvironment,omitempty"`
+
+	// userid
+	Userid string `json:"userid,omitempty"`
 }
 
 // Validate validates this image
@@ -34,6 +43,11 @@ func (m *Image) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateImageType(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateOriginEnvironment(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -129,6 +143,25 @@ func (m *Image) validateImageType(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateImageTypeEnum("image-type", "body", m.ImageType); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Image) validateOriginEnvironment(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.OriginEnvironment) { // not required
+		return nil
+	}
+
+	if m.OriginEnvironment != nil {
+
+		if err := m.OriginEnvironment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("originEnvironment")
+			}
+			return err
+		}
 	}
 
 	return nil

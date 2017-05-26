@@ -31,23 +31,32 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		JSONConsumer:    runtime.JSONConsumer(),
 		XMLConsumer:     runtime.XMLConsumer(),
 		JSONProducer:    runtime.JSONProducer(),
-		CreateExecutionEnvironmentHandler: CreateExecutionEnvironmentHandlerFunc(func(params CreateExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation CreateExecutionEnvironment has not yet been implemented")
+		CreateEnvironmentHandler: CreateEnvironmentHandlerFunc(func(params CreateEnvironmentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation CreateEnvironment has not yet been implemented")
 		}),
-		DeleteExecutionEnvironmentHandler: DeleteExecutionEnvironmentHandlerFunc(func(params DeleteExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation DeleteExecutionEnvironment has not yet been implemented")
+		CreateImageHandler: CreateImageHandlerFunc(func(params CreateImageParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation CreateImage has not yet been implemented")
 		}),
-		FindExecutionEnvironmentHandler: FindExecutionEnvironmentHandlerFunc(func(params FindExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation FindExecutionEnvironment has not yet been implemented")
+		DeleteEnvironmentHandler: DeleteEnvironmentHandlerFunc(func(params DeleteEnvironmentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteEnvironment has not yet been implemented")
+		}),
+		DeleteImageHandler: DeleteImageHandlerFunc(func(params DeleteImageParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteImage has not yet been implemented")
+		}),
+		FindEnvironmentHandler: FindEnvironmentHandlerFunc(func(params FindEnvironmentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation FindEnvironment has not yet been implemented")
 		}),
 		FindImagesHandler: FindImagesHandlerFunc(func(params FindImagesParams) middleware.Responder {
 			return middleware.NotImplemented("operation FindImages has not yet been implemented")
 		}),
-		GetExecutionEnvironmentHandler: GetExecutionEnvironmentHandlerFunc(func(params GetExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation GetExecutionEnvironment has not yet been implemented")
+		GetEnvironmentHandler: GetEnvironmentHandlerFunc(func(params GetEnvironmentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation GetEnvironment has not yet been implemented")
 		}),
-		UpdateExecutionEnvironmentHandler: UpdateExecutionEnvironmentHandlerFunc(func(params UpdateExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation UpdateExecutionEnvironment has not yet been implemented")
+		GetImageHandler: GetImageHandlerFunc(func(params GetImageParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation GetImage has not yet been implemented")
+		}),
+		UpdateEnvironmentHandler: UpdateEnvironmentHandlerFunc(func(params UpdateEnvironmentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation UpdateEnvironment has not yet been implemented")
 		}),
 
 		// Applies when the Authorization header is set with the Basic scheme
@@ -78,18 +87,24 @@ type ViceAPI struct {
 	// it performs authentication with basic auth
 	ViceAuthAuth func(string, string) (interface{}, error)
 
-	// CreateExecutionEnvironmentHandler sets the operation handler for the create execution environment operation
-	CreateExecutionEnvironmentHandler CreateExecutionEnvironmentHandler
-	// DeleteExecutionEnvironmentHandler sets the operation handler for the delete execution environment operation
-	DeleteExecutionEnvironmentHandler DeleteExecutionEnvironmentHandler
-	// FindExecutionEnvironmentHandler sets the operation handler for the find execution environment operation
-	FindExecutionEnvironmentHandler FindExecutionEnvironmentHandler
+	// CreateEnvironmentHandler sets the operation handler for the create environment operation
+	CreateEnvironmentHandler CreateEnvironmentHandler
+	// CreateImageHandler sets the operation handler for the create image operation
+	CreateImageHandler CreateImageHandler
+	// DeleteEnvironmentHandler sets the operation handler for the delete environment operation
+	DeleteEnvironmentHandler DeleteEnvironmentHandler
+	// DeleteImageHandler sets the operation handler for the delete image operation
+	DeleteImageHandler DeleteImageHandler
+	// FindEnvironmentHandler sets the operation handler for the find environment operation
+	FindEnvironmentHandler FindEnvironmentHandler
 	// FindImagesHandler sets the operation handler for the find images operation
 	FindImagesHandler FindImagesHandler
-	// GetExecutionEnvironmentHandler sets the operation handler for the get execution environment operation
-	GetExecutionEnvironmentHandler GetExecutionEnvironmentHandler
-	// UpdateExecutionEnvironmentHandler sets the operation handler for the update execution environment operation
-	UpdateExecutionEnvironmentHandler UpdateExecutionEnvironmentHandler
+	// GetEnvironmentHandler sets the operation handler for the get environment operation
+	GetEnvironmentHandler GetEnvironmentHandler
+	// GetImageHandler sets the operation handler for the get image operation
+	GetImageHandler GetImageHandler
+	// UpdateEnvironmentHandler sets the operation handler for the update environment operation
+	UpdateEnvironmentHandler UpdateEnvironmentHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -161,28 +176,40 @@ func (o *ViceAPI) Validate() error {
 		unregistered = append(unregistered, "ViceAuthAuth")
 	}
 
-	if o.CreateExecutionEnvironmentHandler == nil {
-		unregistered = append(unregistered, "CreateExecutionEnvironmentHandler")
+	if o.CreateEnvironmentHandler == nil {
+		unregistered = append(unregistered, "CreateEnvironmentHandler")
 	}
 
-	if o.DeleteExecutionEnvironmentHandler == nil {
-		unregistered = append(unregistered, "DeleteExecutionEnvironmentHandler")
+	if o.CreateImageHandler == nil {
+		unregistered = append(unregistered, "CreateImageHandler")
 	}
 
-	if o.FindExecutionEnvironmentHandler == nil {
-		unregistered = append(unregistered, "FindExecutionEnvironmentHandler")
+	if o.DeleteEnvironmentHandler == nil {
+		unregistered = append(unregistered, "DeleteEnvironmentHandler")
+	}
+
+	if o.DeleteImageHandler == nil {
+		unregistered = append(unregistered, "DeleteImageHandler")
+	}
+
+	if o.FindEnvironmentHandler == nil {
+		unregistered = append(unregistered, "FindEnvironmentHandler")
 	}
 
 	if o.FindImagesHandler == nil {
 		unregistered = append(unregistered, "FindImagesHandler")
 	}
 
-	if o.GetExecutionEnvironmentHandler == nil {
-		unregistered = append(unregistered, "GetExecutionEnvironmentHandler")
+	if o.GetEnvironmentHandler == nil {
+		unregistered = append(unregistered, "GetEnvironmentHandler")
 	}
 
-	if o.UpdateExecutionEnvironmentHandler == nil {
-		unregistered = append(unregistered, "UpdateExecutionEnvironmentHandler")
+	if o.GetImageHandler == nil {
+		unregistered = append(unregistered, "GetImageHandler")
+	}
+
+	if o.UpdateEnvironmentHandler == nil {
+		unregistered = append(unregistered, "UpdateEnvironmentHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -284,17 +311,27 @@ func (o *ViceAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/executionenvironments"] = NewCreateExecutionEnvironment(o.context, o.CreateExecutionEnvironmentHandler)
+	o.handlers["POST"]["/environments"] = NewCreateEnvironment(o.context, o.CreateEnvironmentHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/images"] = NewCreateImage(o.context, o.CreateImageHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/executionenvironment/{executionenvironmentId}"] = NewDeleteExecutionEnvironment(o.context, o.DeleteExecutionEnvironmentHandler)
+	o.handlers["DELETE"]["/environment/{environmentId}"] = NewDeleteEnvironment(o.context, o.DeleteEnvironmentHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/image/{imageId}"] = NewDeleteImage(o.context, o.DeleteImageHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/executionenvironments"] = NewFindExecutionEnvironment(o.context, o.FindExecutionEnvironmentHandler)
+	o.handlers["GET"]["/environments"] = NewFindEnvironment(o.context, o.FindEnvironmentHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -304,12 +341,17 @@ func (o *ViceAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/executionenvironment/{executionenvironmentId}"] = NewGetExecutionEnvironment(o.context, o.GetExecutionEnvironmentHandler)
+	o.handlers["GET"]["/environment/{environmentId}"] = NewGetEnvironment(o.context, o.GetEnvironmentHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/image/{imageId}"] = NewGetImage(o.context, o.GetImageHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/executionenvironments"] = NewUpdateExecutionEnvironment(o.context, o.UpdateExecutionEnvironmentHandler)
+	o.handlers["PUT"]["/environments"] = NewUpdateEnvironment(o.context, o.UpdateEnvironmentHandler)
 
 }
 

@@ -8,13 +8,11 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
-
-	"github.com/go-openapi/swag"
 )
 
-// GetExecutionEnvironmentURL generates an URL for the get execution environment operation
-type GetExecutionEnvironmentURL struct {
-	ExecutionenvironmentID int64
+// GetImageURL generates an URL for the get image operation
+type GetImageURL struct {
+	ImageID string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -24,7 +22,7 @@ type GetExecutionEnvironmentURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetExecutionEnvironmentURL) WithBasePath(bp string) *GetExecutionEnvironmentURL {
+func (o *GetImageURL) WithBasePath(bp string) *GetImageURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,21 +30,21 @@ func (o *GetExecutionEnvironmentURL) WithBasePath(bp string) *GetExecutionEnviro
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetExecutionEnvironmentURL) SetBasePath(bp string) {
+func (o *GetImageURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetExecutionEnvironmentURL) Build() (*url.URL, error) {
+func (o *GetImageURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/executionenvironment/{executionenvironmentId}"
+	var _path = "/image/{imageId}"
 
-	executionenvironmentID := swag.FormatInt64(o.ExecutionenvironmentID)
-	if executionenvironmentID != "" {
-		_path = strings.Replace(_path, "{executionenvironmentId}", executionenvironmentID, -1)
+	imageID := o.ImageID
+	if imageID != "" {
+		_path = strings.Replace(_path, "{imageId}", imageID, -1)
 	} else {
-		return nil, errors.New("ExecutionenvironmentID is required on GetExecutionEnvironmentURL")
+		return nil, errors.New("ImageID is required on GetImageURL")
 	}
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -58,7 +56,7 @@ func (o *GetExecutionEnvironmentURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetExecutionEnvironmentURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetImageURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -69,17 +67,17 @@ func (o *GetExecutionEnvironmentURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetExecutionEnvironmentURL) String() string {
+func (o *GetImageURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetExecutionEnvironmentURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetImageURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetExecutionEnvironmentURL")
+		return nil, errors.New("scheme is required for a full url on GetImageURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetExecutionEnvironmentURL")
+		return nil, errors.New("host is required for a full url on GetImageURL")
 	}
 
 	base, err := o.Build()
@@ -93,6 +91,6 @@ func (o *GetExecutionEnvironmentURL) BuildFull(scheme, host string) (*url.URL, e
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetExecutionEnvironmentURL) StringFull(scheme, host string) string {
+func (o *GetImageURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

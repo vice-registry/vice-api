@@ -16,9 +16,6 @@ type Credentials struct {
 	// endpoint
 	Endpoint string `json:"endpoint,omitempty"`
 
-	// id
-	ID int64 `json:"id,omitempty"`
-
 	// password
 	Password string `json:"password,omitempty"`
 

@@ -30,10 +30,10 @@ func init() {
   "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
-    "/executionenvironment/{executionenvironmentId}": {
+    "/environment/{environmentId}": {
       "get": {
         "summary": "Get execution environment by id",
-        "operationId": "getExecutionEnvironment",
+        "operationId": "getEnvironment",
         "security": [
           {
             "vice_auth": []
@@ -41,8 +41,8 @@ func init() {
         ],
         "parameters": [
           {
-            "type": "integer",
-            "name": "executionenvironmentId",
+            "type": "string",
+            "name": "environmentId",
             "in": "path",
             "required": true
           }
@@ -51,7 +51,7 @@ func init() {
           "200": {
             "description": "successful operation",
             "schema": {
-              "$ref": "#/definitions/ExecutionEnvironment"
+              "$ref": "#/definitions/Environment"
             }
           },
           "400": {
@@ -61,13 +61,13 @@ func init() {
             "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
-            "description": "Execution environment not found"
+            "description": "Environment not found"
           }
         }
       },
       "delete": {
         "summary": "Deletes an execution environment",
-        "operationId": "deleteExecutionEnvironment",
+        "operationId": "deleteEnvironment",
         "security": [
           {
             "vice_auth": []
@@ -75,13 +75,16 @@ func init() {
         ],
         "parameters": [
           {
-            "type": "integer",
-            "name": "executionenvironmentId",
+            "type": "string",
+            "name": "environmentId",
             "in": "path",
             "required": true
           }
         ],
         "responses": {
+          "200": {
+            "description": "successful operation"
+          },
           "400": {
             "description": "Invalid ID supplied"
           },
@@ -91,10 +94,10 @@ func init() {
         }
       }
     },
-    "/executionenvironments": {
+    "/environments": {
       "get": {
         "summary": "List by user accessible execution environments",
-        "operationId": "findExecutionEnvironment",
+        "operationId": "findEnvironment",
         "security": [
           {
             "vice_auth": []
@@ -118,7 +121,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/ExecutionEnvironment"
+                "$ref": "#/definitions/Environment"
               }
             }
           },
@@ -139,7 +142,7 @@ func init() {
           "application/xml"
         ],
         "summary": "Update an existing execution environment",
-        "operationId": "updateExecutionEnvironment",
+        "operationId": "updateEnvironment",
         "security": [
           {
             "vice_auth": []
@@ -147,11 +150,10 @@ func init() {
         ],
         "parameters": [
           {
-            "description": "Pet object that needs to be added to the store",
             "name": "body",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ExecutionEnvironment"
+              "$ref": "#/definitions/Environment"
             }
           }
         ],
@@ -163,7 +165,7 @@ func init() {
             "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
-            "description": "Execution Environment not found"
+            "description": "Environment not found"
           },
           "405": {
             "description": "Validation exception"
@@ -176,7 +178,7 @@ func init() {
           "application/xml"
         ],
         "summary": "Create a new execution environment for authenticated user",
-        "operationId": "createExecutionEnvironment",
+        "operationId": "createEnvironment",
         "security": [
           {
             "vice_auth": []
@@ -184,11 +186,10 @@ func init() {
         ],
         "parameters": [
           {
-            "description": "Pet object that needs to be added to the store",
             "name": "body",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/ExecutionEnvironment"
+              "$ref": "#/definitions/Environment"
             }
           }
         ],
@@ -196,7 +197,7 @@ func init() {
           "201": {
             "description": "Created",
             "schema": {
-              "$ref": "#/definitions/ExecutionEnvironment"
+              "$ref": "#/definitions/Environment"
             }
           },
           "401": {
@@ -204,6 +205,70 @@ func init() {
           },
           "405": {
             "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/image/{imageId}": {
+      "get": {
+        "summary": "Get an image by id",
+        "operationId": "getImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Image"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Image not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes an image",
+        "operationId": "deleteImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
           }
         }
       }
@@ -229,6 +294,43 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "summary": "Create a new image",
+        "operationId": "createImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Image"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Image"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
       }
     }
   },
@@ -239,13 +341,29 @@ func init() {
         "endpoint": {
           "type": "string"
         },
-        "id": {
-          "type": "integer"
-        },
         "password": {
           "type": "string"
         },
         "username": {
+          "type": "string"
+        }
+      }
+    },
+    "Environment": {
+      "properties": {
+        "credentials": {
+          "$ref": "#/definitions/Credentials"
+        },
+        "id": {
+          "type": "string"
+        },
+        "managementlayer": {
+          "$ref": "#/definitions/ManagementLayer"
+        },
+        "runtimetechnology": {
+          "$ref": "#/definitions/RuntimeTechnology"
+        },
+        "userid": {
           "type": "string"
         }
       }
@@ -265,26 +383,6 @@ func init() {
         }
       }
     },
-    "ExecutionEnvironment": {
-      "type": "object",
-      "properties": {
-        "credentials": {
-          "$ref": "#/definitions/Credentials"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "managementlayer": {
-          "$ref": "#/definitions/ManagementLayer"
-        },
-        "runtimetechnology": {
-          "$ref": "#/definitions/RuntimeTechnology"
-        },
-        "user": {
-          "$ref": "#/definitions/User"
-        }
-      }
-    },
     "Image": {
       "type": "object",
       "properties": {
@@ -299,12 +397,21 @@ func init() {
             "packerfile"
           ]
         },
+        "id": {
+          "type": "string"
+        },
         "image-type": {
           "type": "string",
           "enum": [
             "implicit",
             "declarative"
           ]
+        },
+        "originEnvironment": {
+          "$ref": "#/definitions/Environment"
+        },
+        "userid": {
+          "type": "string"
         }
       }
     },
@@ -348,10 +455,9 @@ func init() {
       }
     },
     "User": {
-      "type": "object",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "string"
         },
         "password": {
           "type": "string"

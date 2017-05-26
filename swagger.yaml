@@ -12,10 +12,10 @@ basePath: /v1
 produces:
   - application/json
 paths:
-  /executionenvironments:
+  /environments:
     get:
       summary: List by user accessible execution environments
-      operationId: findExecutionEnvironment
+      operationId: findEnvironment
       parameters:
         - name: filterManagementlayer
           in: query
@@ -31,7 +31,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/ExecutionEnvironment'
+              $ref: '#/definitions/Environment'
         default:
           description: Unexpected error
           schema:
@@ -43,14 +43,13 @@ paths:
           
     post:
       summary: Create a new execution environment for authenticated user
-      operationId: createExecutionEnvironment
+      operationId: createEnvironment
       parameters:
         - in: body
           name: body
-          description: Pet object that needs to be added to the store
           required: false
           schema:
-            $ref: "#/definitions/ExecutionEnvironment"
+            $ref: "#/definitions/Environment"
       consumes:
         - application/json
         - application/xml
@@ -58,7 +57,7 @@ paths:
         201:
           description: Created
           schema:
-            $ref: "#/definitions/ExecutionEnvironment"      
+            $ref: "#/definitions/Environment"      
         405:
           description: Invalid input
         401:
@@ -68,14 +67,13 @@ paths:
 
     put:
       summary: Update an existing execution environment
-      operationId: updateExecutionEnvironment
+      operationId: updateEnvironment
       parameters:
         - in: body
           name: body
-          description: Pet object that needs to be added to the store
           required: false
           schema:
-            $ref: "#/definitions/ExecutionEnvironment"
+            $ref: "#/definitions/Environment"
       consumes:
         - application/json
         - application/xml
@@ -83,7 +81,7 @@ paths:
         405:
           description: Validation exception
         404:
-          description: Execution Environment not found
+          description: Environment not found
         400:
           description: Invalid ID supplied
         401:
@@ -91,22 +89,22 @@ paths:
       security:
         - vice_auth: []    
           
-  /executionenvironment/{executionenvironmentId}:
+  /environment/{environmentId}:
     get:
       summary: Get execution environment by id
-      operationId: getExecutionEnvironment
+      operationId: getEnvironment
       parameters:
         - in: path
-          name: executionenvironmentId
+          name: environmentId
           required: true
-          type: integer
+          type: string
       responses:
         404:
-          description: Execution environment not found
+          description: Environment not found
         200:
           description: successful operation
           schema:
-            $ref: "#/definitions/ExecutionEnvironment"
+            $ref: "#/definitions/Environment"
         400:
           description: Invalid ID supplied
         401:
@@ -117,13 +115,15 @@ paths:
     delete:
       summary: Deletes an execution environment
       description: ""
-      operationId: deleteExecutionEnvironment
+      operationId: deleteEnvironment
       parameters:
         - in: path
-          name: executionenvironmentId
+          name: environmentId
           required: true
-          type: integer
+          type: string
       responses:
+        200:
+          description: successful operation      
         400:
           description: Invalid ID supplied
         401:
@@ -147,47 +147,98 @@ paths:
           schema:
             $ref: '#/definitions/Error'
 
+    post:
+      summary: Create a new image
+      operationId: createImage
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Image"
+      consumes:
+        - application/json
+        - application/xml
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Image"      
+        405:
+          description: Invalid input
+        401:
+          $ref: "#/responses/UnauthorizedError"          
+      security:
+        - vice_auth: []
+        
+  /image/{imageId}:
+    get:
+      summary: Get an image by id
+      operationId: getImage
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          type: string
+      responses:
+        404:
+          description: Image not found
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Image"
+        400:
+          description: Invalid ID supplied
+        401:
+          $ref: "#/responses/UnauthorizedError"          
+      security:
+        - vice_auth: []    
+        
+    delete:
+      summary: Deletes an image
+      description: ""
+      operationId: deleteImage
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          type: string
+      responses:
+        200:
+          description: successful operation      
+        400:
+          description: Invalid ID supplied
+        401:
+          $ref: "#/responses/UnauthorizedError"
+      security:
+        - vice_auth: []
+
 securityDefinitions:
   vice_auth:
     type: basic
 
 definitions:
-  ExecutionEnvironment:
-    type: object
+  Environment:
     properties:
       id:
-        type: integer
-      user:
-        $ref: "#/definitions/User"
+        type: string    
+      userid:
+        type: string
       credentials:
         $ref: "#/definitions/Credentials"
       runtimetechnology:
         $ref: "#/definitions/RuntimeTechnology"
       managementlayer:
         $ref: "#/definitions/ManagementLayer"
-
   Credentials:
     type: object
     properties:
-      id:
-        type: integer
       endpoint:
         type: string
       username:
         type: string
       password:
         type: string
-
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-      username:
-        type: string
-      password:
-        type: string
-
   RuntimeTechnology:
     type: object
     properties:
@@ -198,7 +249,6 @@ definitions:
         type: string
       version:
         type: string
-
   ManagementLayer:
     type: object
     properties:
@@ -210,15 +260,30 @@ definitions:
       version:
         type: string
 
+  User:
+    properties:
+      id:
+        type: string    
+      username:
+        type: string
+      password:
+        type: string
+
   Image:
     type: object
     properties:
+      id:
+        type: string
+      userid:
+        type: string
       image-type:
         type: string
         enum: [implicit, declarative]
       content-type:
         type: string
         enum: [disk-raw, disk-qcow2, disk-vmdk, docker-file, docker-image, packerfile]
+      originEnvironment:
+        $ref: "#/definitions/Environment"
 
   Error:
     type: object

@@ -10,15 +10,15 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ExecutionEnvironment execution environment
-// swagger:model ExecutionEnvironment
-type ExecutionEnvironment struct {
+// Environment environment
+// swagger:model Environment
+type Environment struct {
 
 	// credentials
 	Credentials *Credentials `json:"credentials,omitempty"`
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// managementlayer
 	Managementlayer *ManagementLayer `json:"managementlayer,omitempty"`
@@ -26,12 +26,12 @@ type ExecutionEnvironment struct {
 	// runtimetechnology
 	Runtimetechnology *RuntimeTechnology `json:"runtimetechnology,omitempty"`
 
-	// user
-	User *User `json:"user,omitempty"`
+	// userid
+	Userid string `json:"userid,omitempty"`
 }
 
-// Validate validates this execution environment
-func (m *ExecutionEnvironment) Validate(formats strfmt.Registry) error {
+// Validate validates this environment
+func (m *Environment) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCredentials(formats); err != nil {
@@ -49,18 +49,13 @@ func (m *ExecutionEnvironment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUser(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (m *ExecutionEnvironment) validateCredentials(formats strfmt.Registry) error {
+func (m *Environment) validateCredentials(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Credentials) { // not required
 		return nil
@@ -79,7 +74,7 @@ func (m *ExecutionEnvironment) validateCredentials(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *ExecutionEnvironment) validateManagementlayer(formats strfmt.Registry) error {
+func (m *Environment) validateManagementlayer(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Managementlayer) { // not required
 		return nil
@@ -98,7 +93,7 @@ func (m *ExecutionEnvironment) validateManagementlayer(formats strfmt.Registry) 
 	return nil
 }
 
-func (m *ExecutionEnvironment) validateRuntimetechnology(formats strfmt.Registry) error {
+func (m *Environment) validateRuntimetechnology(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Runtimetechnology) { // not required
 		return nil
@@ -109,25 +104,6 @@ func (m *ExecutionEnvironment) validateRuntimetechnology(formats strfmt.Registry
 		if err := m.Runtimetechnology.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("runtimetechnology")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *ExecutionEnvironment) validateUser(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.User) { // not required
-		return nil
-	}
-
-	if m.User != nil {
-
-		if err := m.User.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("user")
 			}
 			return err
 		}

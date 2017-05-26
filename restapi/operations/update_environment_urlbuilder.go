@@ -9,20 +9,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// FindExecutionEnvironmentURL generates an URL for the find execution environment operation
-type FindExecutionEnvironmentURL struct {
-	FilterManagementlayer   *string
-	FilterRuntimetechnology *string
-
+// UpdateEnvironmentURL generates an URL for the update environment operation
+type UpdateEnvironmentURL struct {
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *FindExecutionEnvironmentURL) WithBasePath(bp string) *FindExecutionEnvironmentURL {
+func (o *UpdateEnvironmentURL) WithBasePath(bp string) *UpdateEnvironmentURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -30,15 +25,15 @@ func (o *FindExecutionEnvironmentURL) WithBasePath(bp string) *FindExecutionEnvi
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *FindExecutionEnvironmentURL) SetBasePath(bp string) {
+func (o *UpdateEnvironmentURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *FindExecutionEnvironmentURL) Build() (*url.URL, error) {
+func (o *UpdateEnvironmentURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/executionenvironments"
+	var _path = "/environments"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -46,31 +41,11 @@ func (o *FindExecutionEnvironmentURL) Build() (*url.URL, error) {
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
-	qs := make(url.Values)
-
-	var filterManagementlayer string
-	if o.FilterManagementlayer != nil {
-		filterManagementlayer = *o.FilterManagementlayer
-	}
-	if filterManagementlayer != "" {
-		qs.Set("filterManagementlayer", filterManagementlayer)
-	}
-
-	var filterRuntimetechnology string
-	if o.FilterRuntimetechnology != nil {
-		filterRuntimetechnology = *o.FilterRuntimetechnology
-	}
-	if filterRuntimetechnology != "" {
-		qs.Set("filterRuntimetechnology", filterRuntimetechnology)
-	}
-
-	result.RawQuery = qs.Encode()
-
 	return &result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *FindExecutionEnvironmentURL) Must(u *url.URL, err error) *url.URL {
+func (o *UpdateEnvironmentURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -81,17 +56,17 @@ func (o *FindExecutionEnvironmentURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *FindExecutionEnvironmentURL) String() string {
+func (o *UpdateEnvironmentURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *FindExecutionEnvironmentURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *UpdateEnvironmentURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on FindExecutionEnvironmentURL")
+		return nil, errors.New("scheme is required for a full url on UpdateEnvironmentURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on FindExecutionEnvironmentURL")
+		return nil, errors.New("host is required for a full url on UpdateEnvironmentURL")
 	}
 
 	base, err := o.Build()
@@ -105,6 +80,6 @@ func (o *FindExecutionEnvironmentURL) BuildFull(scheme, host string) (*url.URL, 
 }
 
 // StringFull returns the string representation of a complete url
-func (o *FindExecutionEnvironmentURL) StringFull(scheme, host string) string {
+func (o *UpdateEnvironmentURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

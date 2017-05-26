@@ -4,6 +4,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -13,39 +14,45 @@ import (
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
-// NewCreateExecutionEnvironmentParams creates a new CreateExecutionEnvironmentParams object
+// NewCreateImageParams creates a new CreateImageParams object
 // with the default values initialized.
-func NewCreateExecutionEnvironmentParams() CreateExecutionEnvironmentParams {
+func NewCreateImageParams() CreateImageParams {
 	var ()
-	return CreateExecutionEnvironmentParams{}
+	return CreateImageParams{}
 }
 
-// CreateExecutionEnvironmentParams contains all the bound params for the create execution environment operation
+// CreateImageParams contains all the bound params for the create image operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters createExecutionEnvironment
-type CreateExecutionEnvironmentParams struct {
+// swagger:parameters createImage
+type CreateImageParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request
 
-	/*Pet object that needs to be added to the store
+	/*
+	  Required: true
 	  In: body
 	*/
-	Body *models.ExecutionEnvironment
+	Body *models.Image
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *CreateExecutionEnvironmentParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *CreateImageParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.ExecutionEnvironment
+		var body models.Image
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			res = append(res, errors.NewParseError("body", "body", "", err))
+			if err == io.EOF {
+				res = append(res, errors.Required("body", "body"))
+			} else {
+				res = append(res, errors.NewParseError("body", "body", "", err))
+			}
+
 		} else {
 			if err := body.Validate(route.Formats); err != nil {
 				res = append(res, err)
@@ -56,6 +63,8 @@ func (o *CreateExecutionEnvironmentParams) BindRequest(r *http.Request, route *m
 			}
 		}
 
+	} else {
+		res = append(res, errors.Required("body", "body"))
 	}
 
 	if len(res) > 0 {

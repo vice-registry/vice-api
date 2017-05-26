@@ -17,6 +17,11 @@ import (
 
 func main() {
 
+	//InitViceCouchbase()
+	//return
+
+	//Testing()
+
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)

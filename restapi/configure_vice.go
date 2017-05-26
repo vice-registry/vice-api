@@ -2,14 +2,19 @@ package restapi
 
 import (
 	"crypto/tls"
+	"log"
 	"net/http"
+
+	gocb "gopkg.in/couchbase/gocb.v1"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
+	cors "github.com/rs/cors"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/persistence"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
 )
 
@@ -37,50 +42,52 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	var executionEnvironments = make([]*models.ExecutionEnvironment, 1)
-	var credentials = make([]*models.Credentials, 1)
-	//var images = make([]*models.Image, 1)
-	var managementLayers = make([]*models.ManagementLayer, 1)
-	var runtimeTechnologies = make([]*models.RuntimeTechnology, 1)
-	var users = make([]*models.User, 1)
-
-	users[0] = &models.User{1, "geheim", "user"}
-	credentials[0] = &models.Credentials{"endpoint", 1, "pass", "user"}
-	managementLayers[0] = &models.ManagementLayer{"OpenStack", "cloudcomputing", "Kilo"}
-	runtimeTechnologies[0] = &models.RuntimeTechnology{"KVM", "virtualmachine", "4.10.13"}
-	executionEnvironments[0] = &models.ExecutionEnvironment{credentials[0], 1, managementLayers[0], runtimeTechnologies[0], users[0]}
+	cbCluster, err := gocb.Connect("couchbase://localhost")
+	if err != nil {
+		log.Fatalln("cannot connect to couchbase: ", err)
+	}
 
 	// Applies when the Authorization header is set with the Basic scheme
 	api.ViceAuthAuth = func(user string, pass string) (interface{}, error) {
-		for _, userentry := range users {
-			if user == userentry.Username && pass == userentry.Password {
-				// allow
-				return userentry, nil
-			}
+		userentry := persistence.GetUserByName(cbCluster, user)
+		if userentry.Password == pass {
+			// allow
+			return userentry, nil
 		}
 		// deny
-		api.Logger("Access attempt with incorrect user credentials.")
-		return nil, errors.Unauthenticated("basic")
+		return nil, errors.New(401, "invalid authentication")
 	}
 
-	api.CreateExecutionEnvironmentHandler = operations.CreateExecutionEnvironmentHandlerFunc(func(params operations.CreateExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		executionEnvironments = append(executionEnvironments, params.Body)
-		return operations.NewCreateExecutionEnvironmentCreated().WithPayload(params.Body)
+	api.CreateEnvironmentHandler = operations.CreateEnvironmentHandlerFunc(func(params operations.CreateEnvironmentParams, principal interface{}) middleware.Responder {
+		environment := persistence.CreateEnvironment(cbCluster, params.Body)
+		return operations.NewCreateEnvironmentCreated().WithPayload(environment)
 	})
-	api.DeleteExecutionEnvironmentHandler = operations.DeleteExecutionEnvironmentHandlerFunc(func(params operations.DeleteExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation .DeleteExecutionEnvironment has not yet been implemented")
+	api.CreateImageHandler = operations.CreateImageHandlerFunc(func(params operations.CreateImageParams, principal interface{}) middleware.Responder {
+		image := persistence.CreateImage(cbCluster, params.Body)
+		return operations.NewCreateImageCreated().WithPayload(image)
 	})
-	api.FindExecutionEnvironmentHandler = operations.FindExecutionEnvironmentHandlerFunc(func(params operations.FindExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return operations.NewFindExecutionEnvironmentOK().WithPayload(executionEnvironments)
+	api.DeleteEnvironmentHandler = operations.DeleteEnvironmentHandlerFunc(func(params operations.DeleteEnvironmentParams, principal interface{}) middleware.Responder {
+		persistence.DeleteEnvironment(cbCluster, params.EnvironmentID)
+		return operations.NewDeleteEnvironmentOK()
+	})
+	api.DeleteImageHandler = operations.DeleteImageHandlerFunc(func(params operations.DeleteImageParams, principal interface{}) middleware.Responder {
+		persistence.DeleteImage(cbCluster, params.ImageID)
+		return operations.NewDeleteImageOK()
+	})
+	api.FindEnvironmentHandler = operations.FindEnvironmentHandlerFunc(func(params operations.FindEnvironmentParams, principal interface{}) middleware.Responder {
+		environments := persistence.GetEnvironments(cbCluster)
+		return operations.NewFindEnvironmentOK().WithPayload(environments)
 	})
 	api.FindImagesHandler = operations.FindImagesHandlerFunc(func(params operations.FindImagesParams) middleware.Responder {
-		return middleware.NotImplemented("operation .FindImages has not yet been implemented")
+		images := persistence.GetImages(cbCluster)
+		return operations.NewFindImagesOK().WithPayload(images)
 	})
-	api.GetExecutionEnvironmentHandler = operations.GetExecutionEnvironmentHandlerFunc(func(params operations.GetExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation .GetExecutionEnvironment has not yet been implemented")
+	api.GetEnvironmentHandler = operations.GetEnvironmentHandlerFunc(func(params operations.GetEnvironmentParams, principal interface{}) middleware.Responder {
+		environment := persistence.GetEnvironment(cbCluster, params.EnvironmentID)
+		return operations.NewGetEnvironmentOK().WithPayload(environment)
 	})
-	api.UpdateExecutionEnvironmentHandler = operations.UpdateExecutionEnvironmentHandlerFunc(func(params operations.UpdateExecutionEnvironmentParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation .UpdateExecutionEnvironment has not yet been implemented")
+	api.UpdateEnvironmentHandler = operations.UpdateEnvironmentHandlerFunc(func(params operations.UpdateEnvironmentParams, principal interface{}) middleware.Responder {
+		return middleware.NotImplemented("operation .UpdateEnvironment has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}
@@ -109,5 +116,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	return handler
+	handleCORS := cors.Default().Handler
+
+	return handleCORS(handler)
 }
