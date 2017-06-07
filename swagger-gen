@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# Description:
+# swagger-gen generates the go source gode from the swagger.yaml
+# This script is a wrapper for the swagger command line tool, where 
+# parameters like GOPATH are set correctly.
+#
+# Author: Christopher Hauser <post@c-ha.de>
+#
 
 command -v swagger >/dev/null 2>&1 || { echo >&2 "Swagger is not installed.  Aborting."; exit 1; }
 

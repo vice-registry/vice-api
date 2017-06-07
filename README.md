@@ -18,19 +18,16 @@ git clone git@omi-gitlab.e-technik.uni-ulm.de:vice/vice-api.git src/omi-gitlab.e
 ```
 
 ### Compile the swagger API definition
-_ Make sure to have the git repository set up in a GOPATH environment._
+*Make sure to have the git repository set up in a GOPATH environment.*
 
-The API is specified by swagger [1] and compiled into go code with go-swagger [2] (not the official swagger-codegen for go!).
+The API is specified by [swagger](http://swagger.io/) and compiled into go code with [go-swagger](https://goswagger.io/).
+Please note: this is not the official swagger-codegen tool for go!
 Make sure to install the go-swagger binary when you want to generate code from the swagger definition.
 
 If you change the API definition in `swagger.yaml`, use the `./swagger-gen` script to (re-)compile the go files.
 
-[1] http://swagger.io/
-
-[2] https://goswagger.io/
-
 ### Compile vice-api to binary
-_ Make sure to have the git repository set up in a GOPATH environment._
+*Make sure to have the git repository set up in a GOPATH environment.*
 
 ```
 cd $YOUR_VICE-API_WORKSPACE
