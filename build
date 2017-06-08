@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#save paths
+currentpath=$(pwd)
+export GOPATH=$(cd ../../../../; pwd)
+
+# compile go app
+cd $GOPATH
+go build omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+mv vice-api $currentpath
+cd $currentpath
+
+# create docker image
+docker build -t vice-api .
+rm vice-api
+
+# upload docker image
+# todo
