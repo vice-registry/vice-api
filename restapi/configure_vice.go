@@ -12,6 +12,7 @@ import (
 
 	cors "github.com/rs/cors"
 
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/actions"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/persistence"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
@@ -53,6 +54,9 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	// initialize couchbase
 	persistence.SetCouchbaseCredentials(CouchbaseFlags.Location, CouchbaseFlags.Username, CouchbaseFlags.Password)
 	persistence.InitViceCouchbase()
+
+	// initialize rabbitmq
+	actions.SetRabbitmqCredentials(RabbitmqFlags.Location, RabbitmqFlags.Username, RabbitmqFlags.Password)
 
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.XMLConsumer = runtime.XMLConsumer()
@@ -154,11 +158,13 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewCreateImageUnauthorized()
 		}
+		// store image in couchbase
 		image, err := persistence.CreateImage(params.Body)
 		if err != nil {
 			return operations.NewCreateImageInternalServerError()
 		}
-		// TODO put action to message queue
+		// send import action
+		actions.NewImportAction(image)
 		return operations.NewCreateImageCreated().WithPayload(image)
 	})
 	api.UpdateImageHandler = operations.UpdateImageHandlerFunc(func(params operations.UpdateImageParams, principal *models.User) middleware.Responder {
@@ -172,11 +178,13 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if image.Userid != principal.ID {
 			return operations.NewUpdateImageUnauthorized()
 		}
+		// store image in couchbase
 		image, err = persistence.UpdateImage(params.Body)
 		if err != nil {
 			return operations.NewUpdateImageInternalServerError()
 		}
-		// TODO put action to message queue
+		// send import action
+		actions.NewImportAction(image)
 		return operations.NewUpdateImageCreated().WithPayload(image)
 	})
 	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams, principal *models.User) middleware.Responder {
@@ -215,7 +223,6 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewDeployImageUnauthorized()
 		}
-
 		// image valid?
 		image, err := persistence.GetImage(params.Body.Imageid)
 		if err != nil {
@@ -224,7 +231,6 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if image.Userid != principal.ID {
 			return operations.NewDeployImageUnauthorized()
 		}
-
 		// environment valid?
 		environment, err := persistence.GetEnvironment(params.Body.EnvironmentID)
 		if err != nil {
@@ -233,14 +239,13 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if environment.Userid != principal.ID {
 			return operations.NewDeployImageUnauthorized()
 		}
-
 		// store deployment in couchbase
 		deployment, err := persistence.CreateDeployment(params.Body)
 		if err != nil {
 			return operations.NewDeployImageInternalServerError()
 		}
-
-		// TODO put action to message queue
+		// send deployment action
+		actions.NewDeployAction(deployment)
 
 		return operations.NewDeployImageCreated().WithPayload(deployment)
 	})
@@ -314,6 +319,10 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	handleCORS := cors.Default().Handler
+	//handleCORS := cors.Default().Handler
+	handleCORS := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://petstore.swagger.io", "http://localhost"},
+		AllowCredentials: true,
+	}).Handler
 	return handleCORS(handler)
 }
