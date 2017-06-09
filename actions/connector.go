@@ -58,6 +58,7 @@ func sendMessage(queueName string, message string) {
 		false,            // mandatory
 		false,            // immediate
 		amqp.Publishing{
+			DeliveryMode: amqp.Persistent,
 			ContentType: "text/plain",
 			Body:        []byte(body),
 		})

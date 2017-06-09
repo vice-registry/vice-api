@@ -31,6 +31,11 @@ func SetCouchbaseCredentials(location string, username string, password string) 
 	couchbaseCredentials.Cluster = cluster
 }
 
+// CloseConnection closes all open connections to the Couchbase cluster
+func CloseConnection() {
+	// TODO
+}
+
 func generateID(n int) string {
 	b := make([]byte, n)
 	for i := range b {
