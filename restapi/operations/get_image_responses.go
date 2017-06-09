@@ -54,27 +54,6 @@ func (o *GetImageOK) WriteResponse(rw http.ResponseWriter, producer runtime.Prod
 	}
 }
 
-// GetImageBadRequestCode is the HTTP code returned for type GetImageBadRequest
-const GetImageBadRequestCode int = 400
-
-/*GetImageBadRequest Invalid ID supplied
-
-swagger:response getImageBadRequest
-*/
-type GetImageBadRequest struct {
-}
-
-// NewGetImageBadRequest creates GetImageBadRequest with default headers values
-func NewGetImageBadRequest() *GetImageBadRequest {
-	return &GetImageBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *GetImageBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-}
-
 // GetImageUnauthorizedCode is the HTTP code returned for type GetImageUnauthorized
 const GetImageUnauthorizedCode int = 401
 
@@ -121,7 +100,7 @@ func (o *GetImageUnauthorized) WriteResponse(rw http.ResponseWriter, producer ru
 // GetImageNotFoundCode is the HTTP code returned for type GetImageNotFound
 const GetImageNotFoundCode int = 404
 
-/*GetImageNotFound Image not found
+/*GetImageNotFound Element not found
 
 swagger:response getImageNotFound
 */
@@ -137,4 +116,25 @@ func NewGetImageNotFound() *GetImageNotFound {
 func (o *GetImageNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(404)
+}
+
+// GetImageInternalServerErrorCode is the HTTP code returned for type GetImageInternalServerError
+const GetImageInternalServerErrorCode int = 500
+
+/*GetImageInternalServerError Internal Server Error
+
+swagger:response getImageInternalServerError
+*/
+type GetImageInternalServerError struct {
+}
+
+// NewGetImageInternalServerError creates GetImageInternalServerError with default headers values
+func NewGetImageInternalServerError() *GetImageInternalServerError {
+	return &GetImageInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *GetImageInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
 }

@@ -7,19 +7,21 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
 // GetEnvironmentHandlerFunc turns a function with the right signature into a get environment handler
-type GetEnvironmentHandlerFunc func(GetEnvironmentParams, interface{}) middleware.Responder
+type GetEnvironmentHandlerFunc func(GetEnvironmentParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetEnvironmentHandlerFunc) Handle(params GetEnvironmentParams, principal interface{}) middleware.Responder {
+func (fn GetEnvironmentHandlerFunc) Handle(params GetEnvironmentParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GetEnvironmentHandler interface for that can handle valid get environment params
 type GetEnvironmentHandler interface {
-	Handle(GetEnvironmentParams, interface{}) middleware.Responder
+	Handle(GetEnvironmentParams, *models.User) middleware.Responder
 }
 
 // NewGetEnvironment creates a new http.Handler for the get environment operation
@@ -46,9 +48,9 @@ func (o *GetEnvironment) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
-	var principal interface{}
+	var principal *models.User
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.User) // this is really a models.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

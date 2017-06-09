@@ -30,27 +30,6 @@ func (o *DeleteEnvironmentOK) WriteResponse(rw http.ResponseWriter, producer run
 	rw.WriteHeader(200)
 }
 
-// DeleteEnvironmentBadRequestCode is the HTTP code returned for type DeleteEnvironmentBadRequest
-const DeleteEnvironmentBadRequestCode int = 400
-
-/*DeleteEnvironmentBadRequest Invalid ID supplied
-
-swagger:response deleteEnvironmentBadRequest
-*/
-type DeleteEnvironmentBadRequest struct {
-}
-
-// NewDeleteEnvironmentBadRequest creates DeleteEnvironmentBadRequest with default headers values
-func NewDeleteEnvironmentBadRequest() *DeleteEnvironmentBadRequest {
-	return &DeleteEnvironmentBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *DeleteEnvironmentBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-}
-
 // DeleteEnvironmentUnauthorizedCode is the HTTP code returned for type DeleteEnvironmentUnauthorized
 const DeleteEnvironmentUnauthorizedCode int = 401
 
@@ -92,4 +71,46 @@ func (o *DeleteEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, pr
 	}
 
 	rw.WriteHeader(401)
+}
+
+// DeleteEnvironmentNotFoundCode is the HTTP code returned for type DeleteEnvironmentNotFound
+const DeleteEnvironmentNotFoundCode int = 404
+
+/*DeleteEnvironmentNotFound Element not found
+
+swagger:response deleteEnvironmentNotFound
+*/
+type DeleteEnvironmentNotFound struct {
+}
+
+// NewDeleteEnvironmentNotFound creates DeleteEnvironmentNotFound with default headers values
+func NewDeleteEnvironmentNotFound() *DeleteEnvironmentNotFound {
+	return &DeleteEnvironmentNotFound{}
+}
+
+// WriteResponse to the client
+func (o *DeleteEnvironmentNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(404)
+}
+
+// DeleteEnvironmentInternalServerErrorCode is the HTTP code returned for type DeleteEnvironmentInternalServerError
+const DeleteEnvironmentInternalServerErrorCode int = 500
+
+/*DeleteEnvironmentInternalServerError Internal Server Error
+
+swagger:response deleteEnvironmentInternalServerError
+*/
+type DeleteEnvironmentInternalServerError struct {
+}
+
+// NewDeleteEnvironmentInternalServerError creates DeleteEnvironmentInternalServerError with default headers values
+func NewDeleteEnvironmentInternalServerError() *DeleteEnvironmentInternalServerError {
+	return &DeleteEnvironmentInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *DeleteEnvironmentInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
 }

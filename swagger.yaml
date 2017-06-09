@@ -32,12 +32,10 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Environment'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
         401:
-          $ref: "#/responses/UnauthorizedError"            
+          $ref: "#/responses/UnauthorizedError"          
+        500:  
+          description: Internal Server Error
       security:
         - vice_auth: []
           
@@ -58,10 +56,12 @@ paths:
           description: Created
           schema:
             $ref: "#/definitions/Environment"      
-        405:
-          description: Invalid input
         401:
-          $ref: "#/responses/UnauthorizedError"          
+          $ref: "#/responses/UnauthorizedError"         
+        405:
+          description: Invalid input          
+        500:  
+          description: Internal Server Error    
       security:
         - vice_auth: []
 
@@ -78,14 +78,18 @@ paths:
         - application/json
         - application/xml
       responses:
-        405:
-          description: Validation exception
-        404:
-          description: Environment not found
-        400:
-          description: Invalid ID supplied
+        201:
+          description: Updated
+          schema:
+            $ref: "#/definitions/Environment"            
         401:
-          $ref: "#/responses/UnauthorizedError"          
+          $ref: "#/responses/UnauthorizedError"
+        405:
+          description: Invalid input
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error     
       security:
         - vice_auth: []    
           
@@ -99,16 +103,16 @@ paths:
           required: true
           type: string
       responses:
-        404:
-          description: Environment not found
         200:
           description: successful operation
           schema:
             $ref: "#/definitions/Environment"
-        400:
-          description: Invalid ID supplied
         401:
-          $ref: "#/responses/UnauthorizedError"          
+          $ref: "#/responses/UnauthorizedError"
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error  
       security:
         - vice_auth: []    
 
@@ -124,10 +128,12 @@ paths:
       responses:
         200:
           description: successful operation      
-        400:
-          description: Invalid ID supplied
+        404:
+          description: Element not found
         401:
-          $ref: "#/responses/UnauthorizedError"
+          $ref: "#/responses/UnauthorizedError"          
+        500:  
+          description: Internal Server Error
       security:
         - vice_auth: []
 
@@ -142,10 +148,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Image'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
+        500:  
+          description: Internal Server Error
 
     post:
       summary: Create a new image
@@ -164,13 +168,43 @@ paths:
           description: Created
           schema:
             $ref: "#/definitions/Image"      
-        405:
-          description: Invalid input
         401:
           $ref: "#/responses/UnauthorizedError"          
+        405:
+          description: Invalid input          
+        500:  
+          description: Internal Server Error          
       security:
         - vice_auth: []
         
+    put:
+      summary: Update an existing image
+      operationId: updateImage
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Image"
+      consumes:
+        - application/json
+        - application/xml
+      responses:
+        201:
+          description: Updated
+          schema:
+            $ref: "#/definitions/Image"            
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        405:
+          description: Invalid input
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error     
+      security:
+        - vice_auth: []
+
   /image/{imageId}:
     get:
       summary: Get an image by id
@@ -181,16 +215,16 @@ paths:
           required: true
           type: string
       responses:
-        404:
-          description: Image not found
         200:
           description: successful operation
           schema:
             $ref: "#/definitions/Image"
-        400:
-          description: Invalid ID supplied
         401:
-          $ref: "#/responses/UnauthorizedError"          
+          $ref: "#/responses/UnauthorizedError"
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error            
       security:
         - vice_auth: []    
         
@@ -206,10 +240,101 @@ paths:
       responses:
         200:
           description: successful operation      
-        400:
-          description: Invalid ID supplied
+        404:
+          description: Element not found
         401:
-          $ref: "#/responses/UnauthorizedError"
+          $ref: "#/responses/UnauthorizedError"          
+        500:  
+          description: Internal Server Error         
+      security:
+        - vice_auth: []
+
+  /deploy:
+    post:
+      summary: Create an image into an environment
+      operationId: deployImage
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Deployment"
+      consumes:
+        - application/json
+        - application/xml
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/Deployment"      
+        401:
+          $ref: "#/responses/UnauthorizedError"         
+        405:
+          description: Invalid input          
+        500:  
+          description: Internal Server Error           
+      security:
+        - vice_auth: []
+
+  /deployments:
+    get:
+      summary: List all deployments of authenticated user
+      operationId: findDeployments
+      responses:
+        200:
+          description: An array of deployments.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Deployment'
+        401:
+          $ref: "#/responses/UnauthorizedError"            
+        500:  
+          description: Internal Server Error
+      security:
+        - vice_auth: []
+        
+  /deployment/{deploymentId}:
+    get:
+      summary: Get a deployment
+      operationId: getDeployment
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Deployment"
+        401:
+          $ref: "#/responses/UnauthorizedError"             
+        404:
+          description: Deployment not found
+        500:  
+          description: Internal Server Error         
+      security:
+        - vice_auth: []    
+
+    delete:
+      summary: Removes an image deployment from the environment
+      description: ""
+      operationId: deleteDeployment
+      parameters:
+        - in: path
+          name: deploymentId
+          required: true
+          type: string
+      responses:
+        200:
+          description: successful operation      
+        404:
+          description: Element not found
+        401:
+          $ref: "#/responses/UnauthorizedError"          
+        500:  
+          description: Internal Server Error   
       security:
         - vice_auth: []
 
@@ -285,15 +410,18 @@ definitions:
       originEnvironment:
         $ref: "#/definitions/Environment"
 
-  Error:
+  Deployment:
     type: object
     properties:
-      code:
-        type: integer
-        format: int32
-      message:
+      id:
         type: string
-      fields:
+      userid:
+        type: string
+      imageid:
+        type: string
+      environmentId:
+        type: string
+      environmentReference:
         type: string
 
 responses:

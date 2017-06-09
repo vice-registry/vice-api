@@ -30,27 +30,6 @@ func (o *DeleteImageOK) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	rw.WriteHeader(200)
 }
 
-// DeleteImageBadRequestCode is the HTTP code returned for type DeleteImageBadRequest
-const DeleteImageBadRequestCode int = 400
-
-/*DeleteImageBadRequest Invalid ID supplied
-
-swagger:response deleteImageBadRequest
-*/
-type DeleteImageBadRequest struct {
-}
-
-// NewDeleteImageBadRequest creates DeleteImageBadRequest with default headers values
-func NewDeleteImageBadRequest() *DeleteImageBadRequest {
-	return &DeleteImageBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *DeleteImageBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-}
-
 // DeleteImageUnauthorizedCode is the HTTP code returned for type DeleteImageUnauthorized
 const DeleteImageUnauthorizedCode int = 401
 
@@ -92,4 +71,46 @@ func (o *DeleteImageUnauthorized) WriteResponse(rw http.ResponseWriter, producer
 	}
 
 	rw.WriteHeader(401)
+}
+
+// DeleteImageNotFoundCode is the HTTP code returned for type DeleteImageNotFound
+const DeleteImageNotFoundCode int = 404
+
+/*DeleteImageNotFound Element not found
+
+swagger:response deleteImageNotFound
+*/
+type DeleteImageNotFound struct {
+}
+
+// NewDeleteImageNotFound creates DeleteImageNotFound with default headers values
+func NewDeleteImageNotFound() *DeleteImageNotFound {
+	return &DeleteImageNotFound{}
+}
+
+// WriteResponse to the client
+func (o *DeleteImageNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(404)
+}
+
+// DeleteImageInternalServerErrorCode is the HTTP code returned for type DeleteImageInternalServerError
+const DeleteImageInternalServerErrorCode int = 500
+
+/*DeleteImageInternalServerError Internal Server Error
+
+swagger:response deleteImageInternalServerError
+*/
+type DeleteImageInternalServerError struct {
+}
+
+// NewDeleteImageInternalServerError creates DeleteImageInternalServerError with default headers values
+func NewDeleteImageInternalServerError() *DeleteImageInternalServerError {
+	return &DeleteImageInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *DeleteImageInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
 }

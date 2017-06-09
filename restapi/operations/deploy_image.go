@@ -11,37 +11,37 @@ import (
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
-// DeleteImageHandlerFunc turns a function with the right signature into a delete image handler
-type DeleteImageHandlerFunc func(DeleteImageParams, *models.User) middleware.Responder
+// DeployImageHandlerFunc turns a function with the right signature into a deploy image handler
+type DeployImageHandlerFunc func(DeployImageParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteImageHandlerFunc) Handle(params DeleteImageParams, principal *models.User) middleware.Responder {
+func (fn DeployImageHandlerFunc) Handle(params DeployImageParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// DeleteImageHandler interface for that can handle valid delete image params
-type DeleteImageHandler interface {
-	Handle(DeleteImageParams, *models.User) middleware.Responder
+// DeployImageHandler interface for that can handle valid deploy image params
+type DeployImageHandler interface {
+	Handle(DeployImageParams, *models.User) middleware.Responder
 }
 
-// NewDeleteImage creates a new http.Handler for the delete image operation
-func NewDeleteImage(ctx *middleware.Context, handler DeleteImageHandler) *DeleteImage {
-	return &DeleteImage{Context: ctx, Handler: handler}
+// NewDeployImage creates a new http.Handler for the deploy image operation
+func NewDeployImage(ctx *middleware.Context, handler DeployImageHandler) *DeployImage {
+	return &DeployImage{Context: ctx, Handler: handler}
 }
 
-/*DeleteImage swagger:route DELETE /image/{imageId} deleteImage
+/*DeployImage swagger:route POST /deploy deployImage
 
-Deletes an image
+Create an image into an environment
 
 */
-type DeleteImage struct {
+type DeployImage struct {
 	Context *middleware.Context
-	Handler DeleteImageHandler
+	Handler DeployImageHandler
 }
 
-func (o *DeleteImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *DeployImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
-	var Params = NewDeleteImageParams()
+	var Params = NewDeployImageParams()
 
 	uprinc, err := o.Context.Authorize(r, route)
 	if err != nil {

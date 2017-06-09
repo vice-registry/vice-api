@@ -54,27 +54,6 @@ func (o *GetEnvironmentOK) WriteResponse(rw http.ResponseWriter, producer runtim
 	}
 }
 
-// GetEnvironmentBadRequestCode is the HTTP code returned for type GetEnvironmentBadRequest
-const GetEnvironmentBadRequestCode int = 400
-
-/*GetEnvironmentBadRequest Invalid ID supplied
-
-swagger:response getEnvironmentBadRequest
-*/
-type GetEnvironmentBadRequest struct {
-}
-
-// NewGetEnvironmentBadRequest creates GetEnvironmentBadRequest with default headers values
-func NewGetEnvironmentBadRequest() *GetEnvironmentBadRequest {
-	return &GetEnvironmentBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *GetEnvironmentBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-}
-
 // GetEnvironmentUnauthorizedCode is the HTTP code returned for type GetEnvironmentUnauthorized
 const GetEnvironmentUnauthorizedCode int = 401
 
@@ -121,7 +100,7 @@ func (o *GetEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, produ
 // GetEnvironmentNotFoundCode is the HTTP code returned for type GetEnvironmentNotFound
 const GetEnvironmentNotFoundCode int = 404
 
-/*GetEnvironmentNotFound Environment not found
+/*GetEnvironmentNotFound Element not found
 
 swagger:response getEnvironmentNotFound
 */
@@ -137,4 +116,25 @@ func NewGetEnvironmentNotFound() *GetEnvironmentNotFound {
 func (o *GetEnvironmentNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(404)
+}
+
+// GetEnvironmentInternalServerErrorCode is the HTTP code returned for type GetEnvironmentInternalServerError
+const GetEnvironmentInternalServerErrorCode int = 500
+
+/*GetEnvironmentInternalServerError Internal Server Error
+
+swagger:response getEnvironmentInternalServerError
+*/
+type GetEnvironmentInternalServerError struct {
+}
+
+// NewGetEnvironmentInternalServerError creates GetEnvironmentInternalServerError with default headers values
+func NewGetEnvironmentInternalServerError() *GetEnvironmentInternalServerError {
+	return &GetEnvironmentInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *GetEnvironmentInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
 }

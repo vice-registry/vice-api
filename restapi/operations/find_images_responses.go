@@ -57,60 +57,23 @@ func (o *FindImagesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 
 }
 
-/*FindImagesDefault Unexpected error
+// FindImagesInternalServerErrorCode is the HTTP code returned for type FindImagesInternalServerError
+const FindImagesInternalServerErrorCode int = 500
 
-swagger:response findImagesDefault
+/*FindImagesInternalServerError Internal Server Error
+
+swagger:response findImagesInternalServerError
 */
-type FindImagesDefault struct {
-	_statusCode int
-
-	/*
-	  In: Body
-	*/
-	Payload *models.Error `json:"body,omitempty"`
+type FindImagesInternalServerError struct {
 }
 
-// NewFindImagesDefault creates FindImagesDefault with default headers values
-func NewFindImagesDefault(code int) *FindImagesDefault {
-	if code <= 0 {
-		code = 500
-	}
-
-	return &FindImagesDefault{
-		_statusCode: code,
-	}
-}
-
-// WithStatusCode adds the status to the find images default response
-func (o *FindImagesDefault) WithStatusCode(code int) *FindImagesDefault {
-	o._statusCode = code
-	return o
-}
-
-// SetStatusCode sets the status to the find images default response
-func (o *FindImagesDefault) SetStatusCode(code int) {
-	o._statusCode = code
-}
-
-// WithPayload adds the payload to the find images default response
-func (o *FindImagesDefault) WithPayload(payload *models.Error) *FindImagesDefault {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the find images default response
-func (o *FindImagesDefault) SetPayload(payload *models.Error) {
-	o.Payload = payload
+// NewFindImagesInternalServerError creates FindImagesInternalServerError with default headers values
+func NewFindImagesInternalServerError() *FindImagesInternalServerError {
+	return &FindImagesInternalServerError{}
 }
 
 // WriteResponse to the client
-func (o *FindImagesDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *FindImagesInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(o._statusCode)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.WriteHeader(500)
 }

@@ -117,3 +117,24 @@ func (o *CreateEnvironmentMethodNotAllowed) WriteResponse(rw http.ResponseWriter
 
 	rw.WriteHeader(405)
 }
+
+// CreateEnvironmentInternalServerErrorCode is the HTTP code returned for type CreateEnvironmentInternalServerError
+const CreateEnvironmentInternalServerErrorCode int = 500
+
+/*CreateEnvironmentInternalServerError Internal Server Error
+
+swagger:response createEnvironmentInternalServerError
+*/
+type CreateEnvironmentInternalServerError struct {
+}
+
+// NewCreateEnvironmentInternalServerError creates CreateEnvironmentInternalServerError with default headers values
+func NewCreateEnvironmentInternalServerError() *CreateEnvironmentInternalServerError {
+	return &CreateEnvironmentInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *CreateEnvironmentInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+}

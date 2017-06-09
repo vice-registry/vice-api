@@ -11,37 +11,37 @@ import (
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
-// DeleteImageHandlerFunc turns a function with the right signature into a delete image handler
-type DeleteImageHandlerFunc func(DeleteImageParams, *models.User) middleware.Responder
+// UpdateImageHandlerFunc turns a function with the right signature into a update image handler
+type UpdateImageHandlerFunc func(UpdateImageParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteImageHandlerFunc) Handle(params DeleteImageParams, principal *models.User) middleware.Responder {
+func (fn UpdateImageHandlerFunc) Handle(params UpdateImageParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// DeleteImageHandler interface for that can handle valid delete image params
-type DeleteImageHandler interface {
-	Handle(DeleteImageParams, *models.User) middleware.Responder
+// UpdateImageHandler interface for that can handle valid update image params
+type UpdateImageHandler interface {
+	Handle(UpdateImageParams, *models.User) middleware.Responder
 }
 
-// NewDeleteImage creates a new http.Handler for the delete image operation
-func NewDeleteImage(ctx *middleware.Context, handler DeleteImageHandler) *DeleteImage {
-	return &DeleteImage{Context: ctx, Handler: handler}
+// NewUpdateImage creates a new http.Handler for the update image operation
+func NewUpdateImage(ctx *middleware.Context, handler UpdateImageHandler) *UpdateImage {
+	return &UpdateImage{Context: ctx, Handler: handler}
 }
 
-/*DeleteImage swagger:route DELETE /image/{imageId} deleteImage
+/*UpdateImage swagger:route PUT /images updateImage
 
-Deletes an image
+Update an existing image
 
 */
-type DeleteImage struct {
+type UpdateImage struct {
 	Context *middleware.Context
-	Handler DeleteImageHandler
+	Handler UpdateImageHandler
 }
 
-func (o *DeleteImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *UpdateImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
-	var Params = NewDeleteImageParams()
+	var Params = NewUpdateImageParams()
 
 	uprinc, err := o.Context.Authorize(r, route)
 	if err != nil {

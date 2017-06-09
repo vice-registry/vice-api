@@ -11,37 +11,37 @@ import (
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
-// DeleteImageHandlerFunc turns a function with the right signature into a delete image handler
-type DeleteImageHandlerFunc func(DeleteImageParams, *models.User) middleware.Responder
+// GetDeploymentHandlerFunc turns a function with the right signature into a get deployment handler
+type GetDeploymentHandlerFunc func(GetDeploymentParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteImageHandlerFunc) Handle(params DeleteImageParams, principal *models.User) middleware.Responder {
+func (fn GetDeploymentHandlerFunc) Handle(params GetDeploymentParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// DeleteImageHandler interface for that can handle valid delete image params
-type DeleteImageHandler interface {
-	Handle(DeleteImageParams, *models.User) middleware.Responder
+// GetDeploymentHandler interface for that can handle valid get deployment params
+type GetDeploymentHandler interface {
+	Handle(GetDeploymentParams, *models.User) middleware.Responder
 }
 
-// NewDeleteImage creates a new http.Handler for the delete image operation
-func NewDeleteImage(ctx *middleware.Context, handler DeleteImageHandler) *DeleteImage {
-	return &DeleteImage{Context: ctx, Handler: handler}
+// NewGetDeployment creates a new http.Handler for the get deployment operation
+func NewGetDeployment(ctx *middleware.Context, handler GetDeploymentHandler) *GetDeployment {
+	return &GetDeployment{Context: ctx, Handler: handler}
 }
 
-/*DeleteImage swagger:route DELETE /image/{imageId} deleteImage
+/*GetDeployment swagger:route GET /deployment/{deploymentId} getDeployment
 
-Deletes an image
+Get a deployment
 
 */
-type DeleteImage struct {
+type GetDeployment struct {
 	Context *middleware.Context
-	Handler DeleteImageHandler
+	Handler GetDeploymentHandler
 }
 
-func (o *DeleteImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *GetDeployment) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
-	var Params = NewDeleteImageParams()
+	var Params = NewGetDeploymentParams()
 
 	uprinc, err := o.Context.Authorize(r, route)
 	if err != nil {

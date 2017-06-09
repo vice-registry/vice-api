@@ -100,60 +100,23 @@ func (o *FindEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, prod
 	rw.WriteHeader(401)
 }
 
-/*FindEnvironmentDefault Unexpected error
+// FindEnvironmentInternalServerErrorCode is the HTTP code returned for type FindEnvironmentInternalServerError
+const FindEnvironmentInternalServerErrorCode int = 500
 
-swagger:response findEnvironmentDefault
+/*FindEnvironmentInternalServerError Internal Server Error
+
+swagger:response findEnvironmentInternalServerError
 */
-type FindEnvironmentDefault struct {
-	_statusCode int
-
-	/*
-	  In: Body
-	*/
-	Payload *models.Error `json:"body,omitempty"`
+type FindEnvironmentInternalServerError struct {
 }
 
-// NewFindEnvironmentDefault creates FindEnvironmentDefault with default headers values
-func NewFindEnvironmentDefault(code int) *FindEnvironmentDefault {
-	if code <= 0 {
-		code = 500
-	}
-
-	return &FindEnvironmentDefault{
-		_statusCode: code,
-	}
-}
-
-// WithStatusCode adds the status to the find environment default response
-func (o *FindEnvironmentDefault) WithStatusCode(code int) *FindEnvironmentDefault {
-	o._statusCode = code
-	return o
-}
-
-// SetStatusCode sets the status to the find environment default response
-func (o *FindEnvironmentDefault) SetStatusCode(code int) {
-	o._statusCode = code
-}
-
-// WithPayload adds the payload to the find environment default response
-func (o *FindEnvironmentDefault) WithPayload(payload *models.Error) *FindEnvironmentDefault {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the find environment default response
-func (o *FindEnvironmentDefault) SetPayload(payload *models.Error) {
-	o.Payload = payload
+// NewFindEnvironmentInternalServerError creates FindEnvironmentInternalServerError with default headers values
+func NewFindEnvironmentInternalServerError() *FindEnvironmentInternalServerError {
+	return &FindEnvironmentInternalServerError{}
 }
 
 // WriteResponse to the client
-func (o *FindEnvironmentDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *FindEnvironmentInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(o._statusCode)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.WriteHeader(500)
 }

@@ -16,6 +16,8 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
 // NewViceAPI creates a new Vice instance
@@ -31,36 +33,51 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		JSONConsumer:    runtime.JSONConsumer(),
 		XMLConsumer:     runtime.XMLConsumer(),
 		JSONProducer:    runtime.JSONProducer(),
-		CreateEnvironmentHandler: CreateEnvironmentHandlerFunc(func(params CreateEnvironmentParams, principal interface{}) middleware.Responder {
+		CreateEnvironmentHandler: CreateEnvironmentHandlerFunc(func(params CreateEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation CreateEnvironment has not yet been implemented")
 		}),
-		CreateImageHandler: CreateImageHandlerFunc(func(params CreateImageParams, principal interface{}) middleware.Responder {
+		CreateImageHandler: CreateImageHandlerFunc(func(params CreateImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation CreateImage has not yet been implemented")
 		}),
-		DeleteEnvironmentHandler: DeleteEnvironmentHandlerFunc(func(params DeleteEnvironmentParams, principal interface{}) middleware.Responder {
+		DeleteDeploymentHandler: DeleteDeploymentHandlerFunc(func(params DeleteDeploymentParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteDeployment has not yet been implemented")
+		}),
+		DeleteEnvironmentHandler: DeleteEnvironmentHandlerFunc(func(params DeleteEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteEnvironment has not yet been implemented")
 		}),
-		DeleteImageHandler: DeleteImageHandlerFunc(func(params DeleteImageParams, principal interface{}) middleware.Responder {
+		DeleteImageHandler: DeleteImageHandlerFunc(func(params DeleteImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteImage has not yet been implemented")
 		}),
-		FindEnvironmentHandler: FindEnvironmentHandlerFunc(func(params FindEnvironmentParams, principal interface{}) middleware.Responder {
+		DeployImageHandler: DeployImageHandlerFunc(func(params DeployImageParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation DeployImage has not yet been implemented")
+		}),
+		FindDeploymentsHandler: FindDeploymentsHandlerFunc(func(params FindDeploymentsParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation FindDeployments has not yet been implemented")
+		}),
+		FindEnvironmentHandler: FindEnvironmentHandlerFunc(func(params FindEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation FindEnvironment has not yet been implemented")
 		}),
 		FindImagesHandler: FindImagesHandlerFunc(func(params FindImagesParams) middleware.Responder {
 			return middleware.NotImplemented("operation FindImages has not yet been implemented")
 		}),
-		GetEnvironmentHandler: GetEnvironmentHandlerFunc(func(params GetEnvironmentParams, principal interface{}) middleware.Responder {
+		GetDeploymentHandler: GetDeploymentHandlerFunc(func(params GetDeploymentParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation GetDeployment has not yet been implemented")
+		}),
+		GetEnvironmentHandler: GetEnvironmentHandlerFunc(func(params GetEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation GetEnvironment has not yet been implemented")
 		}),
-		GetImageHandler: GetImageHandlerFunc(func(params GetImageParams, principal interface{}) middleware.Responder {
+		GetImageHandler: GetImageHandlerFunc(func(params GetImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation GetImage has not yet been implemented")
 		}),
-		UpdateEnvironmentHandler: UpdateEnvironmentHandlerFunc(func(params UpdateEnvironmentParams, principal interface{}) middleware.Responder {
+		UpdateEnvironmentHandler: UpdateEnvironmentHandlerFunc(func(params UpdateEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateEnvironment has not yet been implemented")
+		}),
+		UpdateImageHandler: UpdateImageHandlerFunc(func(params UpdateImageParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation UpdateImage has not yet been implemented")
 		}),
 
 		// Applies when the Authorization header is set with the Basic scheme
-		ViceAuthAuth: func(user string, pass string) (interface{}, error) {
+		ViceAuthAuth: func(user string, pass string) (*models.User, error) {
 			return nil, errors.NotImplemented("basic auth  (vice_auth) has not yet been implemented")
 		},
 	}
@@ -85,26 +102,36 @@ type ViceAPI struct {
 
 	// ViceAuthAuth registers a function that takes username and password and returns a principal
 	// it performs authentication with basic auth
-	ViceAuthAuth func(string, string) (interface{}, error)
+	ViceAuthAuth func(string, string) (*models.User, error)
 
 	// CreateEnvironmentHandler sets the operation handler for the create environment operation
 	CreateEnvironmentHandler CreateEnvironmentHandler
 	// CreateImageHandler sets the operation handler for the create image operation
 	CreateImageHandler CreateImageHandler
+	// DeleteDeploymentHandler sets the operation handler for the delete deployment operation
+	DeleteDeploymentHandler DeleteDeploymentHandler
 	// DeleteEnvironmentHandler sets the operation handler for the delete environment operation
 	DeleteEnvironmentHandler DeleteEnvironmentHandler
 	// DeleteImageHandler sets the operation handler for the delete image operation
 	DeleteImageHandler DeleteImageHandler
+	// DeployImageHandler sets the operation handler for the deploy image operation
+	DeployImageHandler DeployImageHandler
+	// FindDeploymentsHandler sets the operation handler for the find deployments operation
+	FindDeploymentsHandler FindDeploymentsHandler
 	// FindEnvironmentHandler sets the operation handler for the find environment operation
 	FindEnvironmentHandler FindEnvironmentHandler
 	// FindImagesHandler sets the operation handler for the find images operation
 	FindImagesHandler FindImagesHandler
+	// GetDeploymentHandler sets the operation handler for the get deployment operation
+	GetDeploymentHandler GetDeploymentHandler
 	// GetEnvironmentHandler sets the operation handler for the get environment operation
 	GetEnvironmentHandler GetEnvironmentHandler
 	// GetImageHandler sets the operation handler for the get image operation
 	GetImageHandler GetImageHandler
 	// UpdateEnvironmentHandler sets the operation handler for the update environment operation
 	UpdateEnvironmentHandler UpdateEnvironmentHandler
+	// UpdateImageHandler sets the operation handler for the update image operation
+	UpdateImageHandler UpdateImageHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -184,6 +211,10 @@ func (o *ViceAPI) Validate() error {
 		unregistered = append(unregistered, "CreateImageHandler")
 	}
 
+	if o.DeleteDeploymentHandler == nil {
+		unregistered = append(unregistered, "DeleteDeploymentHandler")
+	}
+
 	if o.DeleteEnvironmentHandler == nil {
 		unregistered = append(unregistered, "DeleteEnvironmentHandler")
 	}
@@ -192,12 +223,24 @@ func (o *ViceAPI) Validate() error {
 		unregistered = append(unregistered, "DeleteImageHandler")
 	}
 
+	if o.DeployImageHandler == nil {
+		unregistered = append(unregistered, "DeployImageHandler")
+	}
+
+	if o.FindDeploymentsHandler == nil {
+		unregistered = append(unregistered, "FindDeploymentsHandler")
+	}
+
 	if o.FindEnvironmentHandler == nil {
 		unregistered = append(unregistered, "FindEnvironmentHandler")
 	}
 
 	if o.FindImagesHandler == nil {
 		unregistered = append(unregistered, "FindImagesHandler")
+	}
+
+	if o.GetDeploymentHandler == nil {
+		unregistered = append(unregistered, "GetDeploymentHandler")
 	}
 
 	if o.GetEnvironmentHandler == nil {
@@ -210,6 +253,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.UpdateEnvironmentHandler == nil {
 		unregistered = append(unregistered, "UpdateEnvironmentHandler")
+	}
+
+	if o.UpdateImageHandler == nil {
+		unregistered = append(unregistered, "UpdateImageHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -233,7 +280,9 @@ func (o *ViceAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[
 
 		case "vice_auth":
 			_ = scheme
-			result[name] = security.BasicAuth(o.ViceAuthAuth)
+			result[name] = security.BasicAuth(func(username, password string) (interface{}, error) {
+				return o.ViceAuthAuth(username, password)
+			})
 
 		}
 	}
@@ -321,12 +370,27 @@ func (o *ViceAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
+	o.handlers["DELETE"]["/deployment/{deploymentId}"] = NewDeleteDeployment(o.context, o.DeleteDeploymentHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
 	o.handlers["DELETE"]["/environment/{environmentId}"] = NewDeleteEnvironment(o.context, o.DeleteEnvironmentHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/image/{imageId}"] = NewDeleteImage(o.context, o.DeleteImageHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/deploy"] = NewDeployImage(o.context, o.DeployImageHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/deployments"] = NewFindDeployments(o.context, o.FindDeploymentsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -337,6 +401,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/images"] = NewFindImages(o.context, o.FindImagesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/deployment/{deploymentId}"] = NewGetDeployment(o.context, o.GetDeploymentHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -352,6 +421,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/environments"] = NewUpdateEnvironment(o.context, o.UpdateEnvironmentHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/images"] = NewUpdateImage(o.context, o.UpdateImageHandler)
 
 }
 

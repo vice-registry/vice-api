@@ -7,19 +7,21 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
 // CreateImageHandlerFunc turns a function with the right signature into a create image handler
-type CreateImageHandlerFunc func(CreateImageParams, interface{}) middleware.Responder
+type CreateImageHandlerFunc func(CreateImageParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn CreateImageHandlerFunc) Handle(params CreateImageParams, principal interface{}) middleware.Responder {
+func (fn CreateImageHandlerFunc) Handle(params CreateImageParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // CreateImageHandler interface for that can handle valid create image params
 type CreateImageHandler interface {
-	Handle(CreateImageParams, interface{}) middleware.Responder
+	Handle(CreateImageParams, *models.User) middleware.Responder
 }
 
 // NewCreateImage creates a new http.Handler for the create image operation
@@ -46,9 +48,9 @@ func (o *CreateImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
-	var principal interface{}
+	var principal *models.User
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.User) // this is really a models.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

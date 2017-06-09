@@ -7,27 +7,51 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
-// UpdateEnvironmentBadRequestCode is the HTTP code returned for type UpdateEnvironmentBadRequest
-const UpdateEnvironmentBadRequestCode int = 400
+// UpdateEnvironmentCreatedCode is the HTTP code returned for type UpdateEnvironmentCreated
+const UpdateEnvironmentCreatedCode int = 201
 
-/*UpdateEnvironmentBadRequest Invalid ID supplied
+/*UpdateEnvironmentCreated Updated
 
-swagger:response updateEnvironmentBadRequest
+swagger:response updateEnvironmentCreated
 */
-type UpdateEnvironmentBadRequest struct {
+type UpdateEnvironmentCreated struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Environment `json:"body,omitempty"`
 }
 
-// NewUpdateEnvironmentBadRequest creates UpdateEnvironmentBadRequest with default headers values
-func NewUpdateEnvironmentBadRequest() *UpdateEnvironmentBadRequest {
-	return &UpdateEnvironmentBadRequest{}
+// NewUpdateEnvironmentCreated creates UpdateEnvironmentCreated with default headers values
+func NewUpdateEnvironmentCreated() *UpdateEnvironmentCreated {
+	return &UpdateEnvironmentCreated{}
+}
+
+// WithPayload adds the payload to the update environment created response
+func (o *UpdateEnvironmentCreated) WithPayload(payload *models.Environment) *UpdateEnvironmentCreated {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the update environment created response
+func (o *UpdateEnvironmentCreated) SetPayload(payload *models.Environment) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *UpdateEnvironmentBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *UpdateEnvironmentCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(400)
+	rw.WriteHeader(201)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // UpdateEnvironmentUnauthorizedCode is the HTTP code returned for type UpdateEnvironmentUnauthorized
@@ -76,7 +100,7 @@ func (o *UpdateEnvironmentUnauthorized) WriteResponse(rw http.ResponseWriter, pr
 // UpdateEnvironmentNotFoundCode is the HTTP code returned for type UpdateEnvironmentNotFound
 const UpdateEnvironmentNotFoundCode int = 404
 
-/*UpdateEnvironmentNotFound Environment not found
+/*UpdateEnvironmentNotFound Element not found
 
 swagger:response updateEnvironmentNotFound
 */
@@ -97,7 +121,7 @@ func (o *UpdateEnvironmentNotFound) WriteResponse(rw http.ResponseWriter, produc
 // UpdateEnvironmentMethodNotAllowedCode is the HTTP code returned for type UpdateEnvironmentMethodNotAllowed
 const UpdateEnvironmentMethodNotAllowedCode int = 405
 
-/*UpdateEnvironmentMethodNotAllowed Validation exception
+/*UpdateEnvironmentMethodNotAllowed Invalid input
 
 swagger:response updateEnvironmentMethodNotAllowed
 */
@@ -113,4 +137,25 @@ func NewUpdateEnvironmentMethodNotAllowed() *UpdateEnvironmentMethodNotAllowed {
 func (o *UpdateEnvironmentMethodNotAllowed) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(405)
+}
+
+// UpdateEnvironmentInternalServerErrorCode is the HTTP code returned for type UpdateEnvironmentInternalServerError
+const UpdateEnvironmentInternalServerErrorCode int = 500
+
+/*UpdateEnvironmentInternalServerError Internal Server Error
+
+swagger:response updateEnvironmentInternalServerError
+*/
+type UpdateEnvironmentInternalServerError struct {
+}
+
+// NewUpdateEnvironmentInternalServerError creates UpdateEnvironmentInternalServerError with default headers values
+func NewUpdateEnvironmentInternalServerError() *UpdateEnvironmentInternalServerError {
+	return &UpdateEnvironmentInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *UpdateEnvironmentInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
 }

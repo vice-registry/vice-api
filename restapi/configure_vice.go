@@ -2,25 +2,20 @@ package restapi
 
 import (
 	"crypto/tls"
-	"log"
 	"net/http"
-
-	gocb "gopkg.in/couchbase/gocb.v1"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
-	cors "github.com/rs/cors"
-
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/persistence"
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target .. --name vice-api --spec ../swagger.yaml
+//go:generate swagger generate server --target .. --name vice-api --spec ../swagger.yaml --principal models.User
 
 func configureFlags(api *operations.ViceAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -42,52 +37,52 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	cbCluster, err := gocb.Connect("couchbase://localhost")
-	if err != nil {
-		log.Fatalln("cannot connect to couchbase: ", err)
-	}
-
 	// Applies when the Authorization header is set with the Basic scheme
-	api.ViceAuthAuth = func(user string, pass string) (interface{}, error) {
-		userentry := persistence.GetUserByName(cbCluster, user)
-		if userentry.Password == pass {
-			// allow
-			return userentry, nil
-		}
-		// deny
-		return nil, errors.New(401, "invalid authentication")
+	api.ViceAuthAuth = func(user string, pass string) (*models.User, error) {
+		return nil, errors.NotImplemented("basic auth  (vice_auth) has not yet been implemented")
 	}
 
-	api.CreateEnvironmentHandler = operations.CreateEnvironmentHandlerFunc(func(params operations.CreateEnvironmentParams, principal interface{}) middleware.Responder {
-		environment := persistence.CreateEnvironment(cbCluster, params.Body)
-		return operations.NewCreateEnvironmentCreated().WithPayload(environment)
+	api.CreateEnvironmentHandler = operations.CreateEnvironmentHandlerFunc(func(params operations.CreateEnvironmentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .CreateEnvironment has not yet been implemented")
 	})
-	api.CreateImageHandler = operations.CreateImageHandlerFunc(func(params operations.CreateImageParams, principal interface{}) middleware.Responder {
-		image := persistence.CreateImage(cbCluster, params.Body)
-		return operations.NewCreateImageCreated().WithPayload(image)
+	api.CreateImageHandler = operations.CreateImageHandlerFunc(func(params operations.CreateImageParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .CreateImage has not yet been implemented")
 	})
-	api.DeleteEnvironmentHandler = operations.DeleteEnvironmentHandlerFunc(func(params operations.DeleteEnvironmentParams, principal interface{}) middleware.Responder {
-		persistence.DeleteEnvironment(cbCluster, params.EnvironmentID)
-		return operations.NewDeleteEnvironmentOK()
+	api.DeleteDeploymentHandler = operations.DeleteDeploymentHandlerFunc(func(params operations.DeleteDeploymentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .DeleteDeployment has not yet been implemented")
 	})
-	api.DeleteImageHandler = operations.DeleteImageHandlerFunc(func(params operations.DeleteImageParams, principal interface{}) middleware.Responder {
-		persistence.DeleteImage(cbCluster, params.ImageID)
-		return operations.NewDeleteImageOK()
+	api.DeleteEnvironmentHandler = operations.DeleteEnvironmentHandlerFunc(func(params operations.DeleteEnvironmentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .DeleteEnvironment has not yet been implemented")
 	})
-	api.FindEnvironmentHandler = operations.FindEnvironmentHandlerFunc(func(params operations.FindEnvironmentParams, principal interface{}) middleware.Responder {
-		environments := persistence.GetEnvironments(cbCluster)
-		return operations.NewFindEnvironmentOK().WithPayload(environments)
+	api.DeleteImageHandler = operations.DeleteImageHandlerFunc(func(params operations.DeleteImageParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .DeleteImage has not yet been implemented")
+	})
+	api.DeployImageHandler = operations.DeployImageHandlerFunc(func(params operations.DeployImageParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .DeployImage has not yet been implemented")
+	})
+	api.FindDeploymentsHandler = operations.FindDeploymentsHandlerFunc(func(params operations.FindDeploymentsParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .FindDeployments has not yet been implemented")
+	})
+	api.FindEnvironmentHandler = operations.FindEnvironmentHandlerFunc(func(params operations.FindEnvironmentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .FindEnvironment has not yet been implemented")
 	})
 	api.FindImagesHandler = operations.FindImagesHandlerFunc(func(params operations.FindImagesParams) middleware.Responder {
-		images := persistence.GetImages(cbCluster)
-		return operations.NewFindImagesOK().WithPayload(images)
+		return middleware.NotImplemented("operation .FindImages has not yet been implemented")
 	})
-	api.GetEnvironmentHandler = operations.GetEnvironmentHandlerFunc(func(params operations.GetEnvironmentParams, principal interface{}) middleware.Responder {
-		environment := persistence.GetEnvironment(cbCluster, params.EnvironmentID)
-		return operations.NewGetEnvironmentOK().WithPayload(environment)
+	api.GetDeploymentHandler = operations.GetDeploymentHandlerFunc(func(params operations.GetDeploymentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .GetDeployment has not yet been implemented")
 	})
-	api.UpdateEnvironmentHandler = operations.UpdateEnvironmentHandlerFunc(func(params operations.UpdateEnvironmentParams, principal interface{}) middleware.Responder {
+	api.GetEnvironmentHandler = operations.GetEnvironmentHandlerFunc(func(params operations.GetEnvironmentParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .GetEnvironment has not yet been implemented")
+	})
+	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .GetImage has not yet been implemented")
+	})
+	api.UpdateEnvironmentHandler = operations.UpdateEnvironmentHandlerFunc(func(params operations.UpdateEnvironmentParams, principal *models.User) middleware.Responder {
 		return middleware.NotImplemented("operation .UpdateEnvironment has not yet been implemented")
+	})
+	api.UpdateImageHandler = operations.UpdateImageHandlerFunc(func(params operations.UpdateImageParams, principal *models.User) middleware.Responder {
+		return middleware.NotImplemented("operation .UpdateImage has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}
@@ -116,7 +111,5 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	handleCORS := cors.Default().Handler
-
-	return handleCORS(handler)
+	return handler
 }

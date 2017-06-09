@@ -7,19 +7,21 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
 // DeleteEnvironmentHandlerFunc turns a function with the right signature into a delete environment handler
-type DeleteEnvironmentHandlerFunc func(DeleteEnvironmentParams, interface{}) middleware.Responder
+type DeleteEnvironmentHandlerFunc func(DeleteEnvironmentParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DeleteEnvironmentHandlerFunc) Handle(params DeleteEnvironmentParams, principal interface{}) middleware.Responder {
+func (fn DeleteEnvironmentHandlerFunc) Handle(params DeleteEnvironmentParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // DeleteEnvironmentHandler interface for that can handle valid delete environment params
 type DeleteEnvironmentHandler interface {
-	Handle(DeleteEnvironmentParams, interface{}) middleware.Responder
+	Handle(DeleteEnvironmentParams, *models.User) middleware.Responder
 }
 
 // NewDeleteEnvironment creates a new http.Handler for the delete environment operation
@@ -46,9 +48,9 @@ func (o *DeleteEnvironment) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
-	var principal interface{}
+	var principal *models.User
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.User) // this is really a models.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

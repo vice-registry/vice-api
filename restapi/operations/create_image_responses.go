@@ -117,3 +117,24 @@ func (o *CreateImageMethodNotAllowed) WriteResponse(rw http.ResponseWriter, prod
 
 	rw.WriteHeader(405)
 }
+
+// CreateImageInternalServerErrorCode is the HTTP code returned for type CreateImageInternalServerError
+const CreateImageInternalServerErrorCode int = 500
+
+/*CreateImageInternalServerError Internal Server Error
+
+swagger:response createImageInternalServerError
+*/
+type CreateImageInternalServerError struct {
+}
+
+// NewCreateImageInternalServerError creates CreateImageInternalServerError with default headers values
+func NewCreateImageInternalServerError() *CreateImageInternalServerError {
+	return &CreateImageInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *CreateImageInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+}

@@ -30,6 +30,143 @@ func init() {
   "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
+    "/deploy": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "summary": "Create an image into an environment",
+        "operationId": "deployImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/deployment/{deploymentId}": {
+      "get": {
+        "summary": "Get a deployment",
+        "operationId": "getDeployment",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "deploymentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Deployment not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Removes an image deployment from the environment",
+        "operationId": "deleteDeployment",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "deploymentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/deployments": {
+      "get": {
+        "summary": "List all deployments of authenticated user",
+        "operationId": "findDeployments",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of deployments.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Deployment"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/environment/{environmentId}": {
       "get": {
         "summary": "Get execution environment by id",
@@ -54,14 +191,14 @@ func init() {
               "$ref": "#/definitions/Environment"
             }
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
           "401": {
             "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
-            "description": "Environment not found"
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -85,11 +222,14 @@ func init() {
           "200": {
             "description": "successful operation"
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
           "401": {
             "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -128,11 +268,8 @@ func init() {
           "401": {
             "$ref": "#/responses/UnauthorizedError"
           },
-          "default": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -158,17 +295,23 @@ func init() {
           }
         ],
         "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
+          "201": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/definitions/Environment"
+            }
           },
           "401": {
             "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
-            "description": "Environment not found"
+            "description": "Element not found"
           },
           "405": {
-            "description": "Validation exception"
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -205,6 +348,9 @@ func init() {
           },
           "405": {
             "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -233,14 +379,14 @@ func init() {
               "$ref": "#/definitions/Image"
             }
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
           "401": {
             "$ref": "#/responses/UnauthorizedError"
           },
           "404": {
-            "description": "Image not found"
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -264,11 +410,14 @@ func init() {
           "200": {
             "description": "successful operation"
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
           "401": {
             "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -287,11 +436,51 @@ func init() {
               }
             }
           },
-          "default": {
-            "description": "Unexpected error",
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "summary": "Update an existing image",
+        "operationId": "updateImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/Image"
             }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/definitions/Image"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
@@ -329,6 +518,9 @@ func init() {
           },
           "405": {
             "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -349,6 +541,26 @@ func init() {
         }
       }
     },
+    "Deployment": {
+      "type": "object",
+      "properties": {
+        "environmentId": {
+          "type": "string"
+        },
+        "environmentReference": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "imageid": {
+          "type": "string"
+        },
+        "userid": {
+          "type": "string"
+        }
+      }
+    },
     "Environment": {
       "properties": {
         "credentials": {
@@ -364,21 +576,6 @@ func init() {
           "$ref": "#/definitions/RuntimeTechnology"
         },
         "userid": {
-          "type": "string"
-        }
-      }
-    },
-    "Error": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "fields": {
-          "type": "string"
-        },
-        "message": {
           "type": "string"
         }
       }

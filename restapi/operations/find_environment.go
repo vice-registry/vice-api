@@ -7,19 +7,21 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+
+	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
 )
 
 // FindEnvironmentHandlerFunc turns a function with the right signature into a find environment handler
-type FindEnvironmentHandlerFunc func(FindEnvironmentParams, interface{}) middleware.Responder
+type FindEnvironmentHandlerFunc func(FindEnvironmentParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn FindEnvironmentHandlerFunc) Handle(params FindEnvironmentParams, principal interface{}) middleware.Responder {
+func (fn FindEnvironmentHandlerFunc) Handle(params FindEnvironmentParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
 // FindEnvironmentHandler interface for that can handle valid find environment params
 type FindEnvironmentHandler interface {
-	Handle(FindEnvironmentParams, interface{}) middleware.Responder
+	Handle(FindEnvironmentParams, *models.User) middleware.Responder
 }
 
 // NewFindEnvironment creates a new http.Handler for the find environment operation
@@ -46,9 +48,9 @@ func (o *FindEnvironment) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
-	var principal interface{}
+	var principal *models.User
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.User) // this is really a models.User, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
