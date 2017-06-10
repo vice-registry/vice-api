@@ -20,14 +20,23 @@ type Image struct {
 	// content type
 	ContentType string `json:"content-type,omitempty"`
 
+	// environment reference
+	EnvironmentReference string `json:"environmentReference,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
 
 	// image type
 	ImageType string `json:"image-type,omitempty"`
 
+	// imported
+	Imported bool `json:"imported,omitempty"`
+
 	// origin environment
 	OriginEnvironment *Environment `json:"originEnvironment,omitempty"`
+
+	// specifics
+	Specifics interface{} `json:"specifics,omitempty"`
 
 	// userid
 	Userid string `json:"userid,omitempty"`

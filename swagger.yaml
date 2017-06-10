@@ -358,12 +358,14 @@ definitions:
   Credentials:
     type: object
     properties:
-      endpoint:
+      location:
         type: string
       username:
         type: string
       password:
         type: string
+      specifics:
+        type: object
   RuntimeTechnology:
     type: object
     properties:
@@ -407,8 +409,14 @@ definitions:
       content-type:
         type: string
         enum: [disk-raw, disk-qcow2, disk-vmdk, docker-file, docker-image, packerfile]
+      imported:
+        type: boolean
       originEnvironment:
         $ref: "#/definitions/Environment"
+      environmentReference:
+        type: string
+      specifics:
+        type: object
 
   Deployment:
     type: object

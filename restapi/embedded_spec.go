@@ -530,11 +530,14 @@ func init() {
     "Credentials": {
       "type": "object",
       "properties": {
-        "endpoint": {
+        "location": {
           "type": "string"
         },
         "password": {
           "type": "string"
+        },
+        "specifics": {
+          "type": "object"
         },
         "username": {
           "type": "string"
@@ -594,6 +597,9 @@ func init() {
             "packerfile"
           ]
         },
+        "environmentReference": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -604,8 +610,14 @@ func init() {
             "declarative"
           ]
         },
+        "imported": {
+          "type": "boolean"
+        },
         "originEnvironment": {
           "$ref": "#/definitions/Environment"
+        },
+        "specifics": {
+          "type": "object"
         },
         "userid": {
           "type": "string"

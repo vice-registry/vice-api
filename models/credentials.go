@@ -13,11 +13,14 @@ import (
 // swagger:model Credentials
 type Credentials struct {
 
-	// endpoint
-	Endpoint string `json:"endpoint,omitempty"`
+	// location
+	Location string `json:"location,omitempty"`
 
 	// password
 	Password string `json:"password,omitempty"`
+
+	// specifics
+	Specifics interface{} `json:"specifics,omitempty"`
 
 	// username
 	Username string `json:"username,omitempty"`
