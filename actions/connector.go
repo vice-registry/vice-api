@@ -59,8 +59,8 @@ func sendMessage(queueName string, message string) {
 		false,            // immediate
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			ContentType:  "text/plain",
+			Body:         []byte(body),
 		})
 	failOnError(err, "Failed to publish a message to queue "+queueName)
 }

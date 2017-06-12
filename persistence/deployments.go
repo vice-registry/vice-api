@@ -46,7 +46,7 @@ func DeleteDeployment(id string) error {
 // GetDeployment returns a single deployment by id
 func GetDeployment(id string) (*models.Deployment, error) {
 	var item models.Deployment
-	err := getItem(&item, id, "vice-deployment")
+	err := getItem(&item, id, "vice-deployments")
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +55,8 @@ func GetDeployment(id string) (*models.Deployment, error) {
 
 // GetDeployments returns an array of deployments of the authenticated user
 func GetDeployments() ([]*models.Deployment, error) {
-	query := gocb.NewN1qlQuery("SELECT id, userid, imageid, environmentId, environmentReference FROM `vice-environments` AS environments;")
-	bucket, err := couchbaseCredentials.Cluster.OpenBucket("vice-deployment", couchbaseCredentials.Password)
+	query := gocb.NewN1qlQuery("SELECT id, userid, imageid, environmentId, environmentReference FROM `vice-deployments` AS deployments;")
+	bucket, err := couchbaseCredentials.Cluster.OpenBucket("vice-deployments", couchbaseCredentials.Password)
 	if err != nil {
 		log.Printf("Error in persistence GetDeployments: cannot open bucket %s: %s", "vice-deployments", err)
 		return nil, err
