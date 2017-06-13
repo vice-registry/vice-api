@@ -17,7 +17,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
+	"github.com/vice-registry/vice-api/models"
 )
 
 // NewViceAPI creates a new Vice instance

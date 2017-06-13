@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi"
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
+	"github.com/vice-registry/vice-api/restapi"
+	"github.com/vice-registry/vice-api/restapi/operations"
 
 	loads "github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"

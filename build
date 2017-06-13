@@ -6,7 +6,7 @@ export GOPATH=$(cd ../../../../; pwd)
 
 # compile go app
 cd $GOPATH
-go build omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+go build github.com/vice-registry/vice-api
 mv vice-api $currentpath
 cd $currentpath
 

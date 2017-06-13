@@ -12,10 +12,10 @@ import (
 
 	cors "github.com/rs/cors"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/actions"
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/persistence"
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
+	"github.com/vice-registry/vice-api/actions"
+	"github.com/vice-registry/vice-api/models"
+	"github.com/vice-registry/vice-api/persistence"
+	"github.com/vice-registry/vice-api/restapi/operations"
 )
 
 // CouchbaseFlags cli Configuration options for couchbase connection

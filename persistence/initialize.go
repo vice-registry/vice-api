@@ -5,7 +5,7 @@ import (
 	"time"
 
 	gocb "gopkg.in/couchbase/gocb.v1"
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
+	"github.com/vice-registry/vice-api/models"
 )
 
 // InitViceCouchbase initializes an empty couchbase instance (e.g. creates admin account)

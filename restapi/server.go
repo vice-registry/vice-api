@@ -18,7 +18,7 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	graceful "github.com/tylerb/graceful"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/restapi/operations"
+	"github.com/vice-registry/vice-api/restapi/operations"
 )
 
 const (

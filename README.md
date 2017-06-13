@@ -12,9 +12,9 @@ cd $YOUR_VICE-API_WORKSPACE
 
 export GOPATH=$(pwd)
 # clone the src repo
-git clone git@omi-gitlab.e-technik.uni-ulm.de:vice/vice-api.git src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+git clone git@omi-gitlab.e-technik.uni-ulm.de:vice/vice-api.git src/github.com/vice-registry/vice-api
 # get dependencies
-(cd src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api;  go get -u -f ./...)
+(cd src/github.com/vice-registry/vice-api;  go get -u -f ./...)
 ```
 
 ### Compile the swagger API definition
@@ -33,7 +33,7 @@ If you change the API definition in `swagger.yaml`, use the `./swagger-gen` scri
 cd $YOUR_VICE-API_WORKSPACE
 
 export GOPATH=$(pwd)
-go install omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+go install github.com/vice-registry/vice-api
 ```
 
 The last command will create the binary `bin/vice-api`, which provides the REST API.

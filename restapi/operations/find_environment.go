@@ -8,7 +8,7 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 
-	"omi-gitlab.e-technik.uni-ulm.de/vice/vice-api/models"
+	"github.com/vice-registry/vice-api/models"
 )
 
 // FindEnvironmentHandlerFunc turns a function with the right signature into a find environment handler
