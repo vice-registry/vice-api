@@ -25,6 +25,7 @@ deploy:
   api_key:
     secure: IJV/QrcdYlKUT2kncKPX/ryF+OHrHBbzbf2ZilIw532a7vVXlmaKgKzBFaocMD7VZL84nWpK+tmOT3ujY/yYoENUTg91Gw8cy9bXH2YPRVUSWZYXDnXZM1ZIapc1GwdlTiuX95iQ3nQSYeg0wsdTgDAr8AMAkR13pH509ExuzzzNZRZTIWaRJSmz4DJVcKj9Fmq6654XnKcyxJbIeB/c6i4Ef9hE8QOnu/O+hTnksFzNiSjgcyidqj1kWXms81SpCgTtkzTkzu72NfgQcokUyGFL2AvTVMUn6YCQ3t5tgR/YdMGY9B151yNiUu8Za9jWIfl4mE3xHqAKkrELowVFrlcVb49b6+EFRu/eAMgmACHE8P67ckpkVdgzzOWMCTmQCJtNSiMud9+oyCs6htD+7hVLnePJs5tL6PZb5mrmOWOX6aB4EZe879EwIRIfA5gqfqJ/nBYWr1glbAkDqz+as1S6ZVvWJwhnlneiK2Op9x27CT0bPwNlM5mGk2CFKTth4TK+zgpecYYnayx5PjehBiKh8RA0r8/sUJq79AsCLgnjtP/qUXP3AaaarpZrLx4Y7+IKoC/dggTD7QDvowHPf03nsCNPP76si/85p4EEIcGcJ2h3l65YaGUz3gxLFAenr30lKXTH6n5XKbbjW218NSYp/YNyls2V7BrprY92DpQ=
   file: vice-api
+  skip_cleanup: true
   on:
     repo: vice-registry/vice-api
     tags: true
