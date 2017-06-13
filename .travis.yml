@@ -1,9 +1,25 @@
+sudo: true
+dist: trusty
 language: go
 go:
   - '1.8' 
-install:
-  - "go get -d -v ./..."
-  - "go build -v"
+
+jobs:
+  include:
+    - stage: compile go app
+      script: 
+      - go get -d -v ./...
+      - go build -v    
+    - stage: build docker image
+      script:
+      - go get -d -v ./...
+      - go build -v
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t vice-api:latest .
+      - docker tag vice-api:latest viceregistry/vice-api:latest
+      - docker images
+      - docker push viceregistry/vice-api:latest
+
 deploy:
   provider: releases
   api_key:
