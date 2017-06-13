@@ -27,3 +27,4 @@ deploy:
   file: vice-api
   on:
     repo: vice-registry/vice-api
+    tags: true
