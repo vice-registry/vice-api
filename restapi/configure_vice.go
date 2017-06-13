@@ -245,7 +245,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewDeployImageInternalServerError()
 		}
 		// send deployment action
-		actions.NewDeployAction(deployment)
+		actions.NewExportAction(deployment)
 
 		return operations.NewDeployImageCreated().WithPayload(deployment)
 	})

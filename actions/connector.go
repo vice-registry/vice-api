@@ -69,6 +69,6 @@ func NewImportAction(image *models.Image) {
 	sendMessage("import", image.ID)
 }
 
-func NewDeployAction(deployment *models.Deployment) {
-	sendMessage("deploy", deployment.ID)
+func NewExportAction(deployment *models.Deployment) {
+	sendMessage("export", deployment.ID)
 }
