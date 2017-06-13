@@ -1,4 +1,4 @@
-# ViCE-API - RESTful Service Endpoint of ViCE Image Registry
+# ViCE-API - RESTful Service of ViCE Registry [![Build Status](https://travis-ci.org/vice-registry/vice-api.svg?branch=master)](https://travis-ci.org/vice-registry/vice-api)
 
 This is the RESTful service endpoint of the image registry for the ViCE project.
 
