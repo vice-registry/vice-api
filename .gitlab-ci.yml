@@ -1,0 +1,17 @@
+image: golang:1.8.3
+stages:
+  - build
+
+before_script:
+  - cp -r /builds/user /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/
+  - cd /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
+
+build:
+  stage: build
+  script:
+    - go get -d -v ./...
+    - go build -v
+    - ls -lah
+  artifacts:
+    paths:
+      - /go/bin/vice-api
