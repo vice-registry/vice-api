@@ -3,7 +3,7 @@ stages:
   - build
 
 before_script:
-  - mkdir /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/
+  - mkdir -p /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/
   - cp -r /builds/vice /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/
   - cd /go/src/omi-gitlab.e-technik.uni-ulm.de/vice/vice-api
 
