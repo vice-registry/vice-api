@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	gocb "gopkg.in/couchbase/gocb.v1"
 	"github.com/vice-registry/vice-api/models"
+	gocb "gopkg.in/couchbase/gocb.v1"
 )
 
 // InitViceCouchbase initializes an empty couchbase instance (e.g. creates admin account)
@@ -67,7 +67,7 @@ func createBucket(cluster *gocb.Cluster, clusterManager *gocb.ClusterManager, bu
 		testBucket, err := cluster.OpenBucket(bucketname, couchbaseCredentials.Password)
 		if err != nil {
 			log.Printf("Testing availability of bucket %s (try %d/10): %s", bucketname, i, err)
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(1000 * time.Millisecond)
 		} else {
 			testBucket.Close()
 			// bucket available. go on.
