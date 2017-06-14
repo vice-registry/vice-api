@@ -4,4 +4,18 @@ RUN mkdir -p /opt/vice/
 WORKDIR /opt/vice/
 ADD vice-api /opt/vice/
 RUN chmod +x /opt/vice/vice-api
-CMD /opt/vice/vice-api
+ENV PORT=8080 \
+    COUCHBASE_LOCATION=localhost \
+    COUCHBASE_USER=admin \
+    COUCHBASE_PASS=admin \
+    RABBITMQ_LOCATION=localhost \
+    RABBITMQ_USER=admin \
+    RABBITMQ_PASS=admin
+CMD /opt/vice/vice-api \
+    --port $PORT \
+    --couchbase-location $COUCHBASE_LOCATION \
+    --couchbase-user $COUCHBASE_USER \
+    --couchbase-pass $COUCHBASE_PASS \
+    --rabbitmq-location $RABBITMQ_LOCATION \
+    --rabbitmq-user $RABBITMQ_USER \
+    --rabbitmq-pass $RABBITMQ_PASS
