@@ -13,6 +13,7 @@ ENV PORT=8080 \
     RABBITMQ_PASS=admin
 CMD /opt/vice/vice-api \
     --port $PORT \
+    --host 0.0.0.0 \
     --couchbase-location $COUCHBASE_LOCATION \
     --couchbase-user $COUCHBASE_USER \
     --couchbase-pass $COUCHBASE_PASS \
