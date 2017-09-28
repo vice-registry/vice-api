@@ -82,7 +82,10 @@ func createBucket(cluster *gocb.Cluster, clusterManager *gocb.ClusterManager, bu
 	}
 	defer bucket.Close()
 	bucketManager := bucket.Manager("", "")
-	bucketManager.CreatePrimaryIndex("", true, false)
+	err = bucketManager.CreatePrimaryIndex("", true, false)
+	if err != nil {
+		log.Fatalf("Cannot create primary on %s: %s", bucketname, err)
+	}
 }
 
 func createAdminUser(cluster *gocb.Cluster) {
