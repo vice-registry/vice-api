@@ -3,8 +3,8 @@ package persistence
 import (
 	"log"
 
-	gocb "gopkg.in/couchbase/gocb.v1"
 	"github.com/vice-registry/vice-api/models"
+	gocb "gopkg.in/couchbase/gocb.v1"
 )
 
 // CreateImage creates the provided image
@@ -54,15 +54,18 @@ func GetImage(id string) (*models.Image, error) {
 }
 
 // GetImages returns an array of images of the authenticated user
-func GetImages() ([]*models.Image, error) {
-	var items []*models.Image
-	query := gocb.NewN1qlQuery("SELECT `id`, `content-type`, `image-type`, `originEnvironment`, `userid` FROM `vice-images` AS images;")
+func GetImages(user *models.User) ([]*models.Image, error) {
+	query := gocb.NewN1qlQuery("SELECT images.* FROM `vice-images` AS images WHERE `userid` LIKE  $1;")
+	params := []interface{}{"%"}
+	if user != nil {
+		params = []interface{}{user.ID}
+	}
 	bucket, err := couchbaseCredentials.Cluster.OpenBucket("vice-images", couchbaseCredentials.Password)
 	if err != nil {
 		log.Printf("Error in persistence GetImages: cannot open bucket %s: %s", "vice-images", err)
 		return nil, err
 	}
-	rows, err := bucket.ExecuteN1qlQuery(query, []interface{}{})
+	rows, err := bucket.ExecuteN1qlQuery(query, params)
 	if err != nil {
 		log.Printf("Error in persistence GetImages: cannot run query on bucket %s: %s", "vice-images", err)
 		return nil, err
@@ -70,11 +73,15 @@ func GetImages() ([]*models.Image, error) {
 	if err != nil {
 		log.Printf("Failed to execute query to couchbase bucket vice-images: %s", err)
 	}
+	var items []*models.Image
 	var item models.Image
 	for rows.Next(&item) {
 		copy := new(models.Image)
 		*copy = item
-		items = append(items, copy)
+		if item.ID != "" {
+			items = append(items, copy)
+		}
+		item = models.Image{}
 	}
 	return items, nil
 }

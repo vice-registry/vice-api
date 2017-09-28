@@ -3,8 +3,8 @@ package persistence
 import (
 	"log"
 
-	gocb "gopkg.in/couchbase/gocb.v1"
 	"github.com/vice-registry/vice-api/models"
+	gocb "gopkg.in/couchbase/gocb.v1"
 )
 
 // CreateDeployment creates the provided deployment
@@ -54,14 +54,18 @@ func GetDeployment(id string) (*models.Deployment, error) {
 }
 
 // GetDeployments returns an array of deployments of the authenticated user
-func GetDeployments() ([]*models.Deployment, error) {
-	query := gocb.NewN1qlQuery("SELECT id, userid, imageid, environmentId, environmentReference FROM `vice-deployments` AS deployments;")
+func GetDeployments(user *models.User) ([]*models.Deployment, error) {
+	query := gocb.NewN1qlQuery("SELECT deployments.* FROM `vice-deployments` AS deployments WHERE `userid` LIKE  $1;")
+	params := []interface{}{"%"}
+	if user != nil {
+		params = []interface{}{user.ID}
+	}
 	bucket, err := couchbaseCredentials.Cluster.OpenBucket("vice-deployments", couchbaseCredentials.Password)
 	if err != nil {
 		log.Printf("Error in persistence GetDeployments: cannot open bucket %s: %s", "vice-deployments", err)
 		return nil, err
 	}
-	rows, err := bucket.ExecuteN1qlQuery(query, []interface{}{})
+	rows, err := bucket.ExecuteN1qlQuery(query, params)
 	if err != nil {
 		log.Printf("Error in persistence GetDeployments: cannot run query on bucket %s: %s", "vice-deployments", err)
 		return nil, err
@@ -71,7 +75,10 @@ func GetDeployments() ([]*models.Deployment, error) {
 	for rows.Next(&item) {
 		copy := new(models.Deployment)
 		*copy = item
-		items = append(items, copy)
+		if item.ID != "" {
+			items = append(items, copy)
+		}
+		item = models.Deployment{}
 	}
 	return items, nil
 }

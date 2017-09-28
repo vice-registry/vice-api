@@ -150,6 +150,8 @@ paths:
               $ref: '#/definitions/Image'
         500:  
           description: Internal Server Error
+      security:
+        - vice_auth: []          
 
     post:
       summary: Create a new image

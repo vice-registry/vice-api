@@ -62,7 +62,7 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		FindEnvironmentHandler: FindEnvironmentHandlerFunc(func(params FindEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation FindEnvironment has not yet been implemented")
 		}),
-		FindImagesHandler: FindImagesHandlerFunc(func(params FindImagesParams) middleware.Responder {
+		FindImagesHandler: FindImagesHandlerFunc(func(params FindImagesParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation FindImages has not yet been implemented")
 		}),
 		GetDeploymentHandler: GetDeploymentHandlerFunc(func(params GetDeploymentParams, principal *models.User) middleware.Responder {

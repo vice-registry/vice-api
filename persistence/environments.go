@@ -3,8 +3,8 @@ package persistence
 import (
 	"log"
 
-	gocb "gopkg.in/couchbase/gocb.v1"
 	"github.com/vice-registry/vice-api/models"
+	gocb "gopkg.in/couchbase/gocb.v1"
 )
 
 // CreateEnvironment creates the provided environment
@@ -54,14 +54,18 @@ func GetEnvironment(id string) (*models.Environment, error) {
 }
 
 // GetEnvironments returns an array of environments of the authenticated user
-func GetEnvironments() ([]*models.Environment, error) {
-	query := gocb.NewN1qlQuery("SELECT id, credentials, managementlayer, runtimetechnology, userid FROM `vice-environments` AS environments;")
+func GetEnvironments(user *models.User) ([]*models.Environment, error) {
+	query := gocb.NewN1qlQuery("SELECT environments.* FROM `vice-environments` AS environments WHERE `userid` LIKE  $1;")
+	params := []interface{}{"%"}
+	if user != nil {
+		params = []interface{}{user.ID}
+	}
 	bucket, err := couchbaseCredentials.Cluster.OpenBucket("vice-environments", couchbaseCredentials.Password)
 	if err != nil {
 		log.Printf("Error in persistence GetEnvironments: cannot open bucket %s: %s", "vice-environments", err)
 		return nil, err
 	}
-	rows, err := bucket.ExecuteN1qlQuery(query, []interface{}{})
+	rows, err := bucket.ExecuteN1qlQuery(query, params)
 	if err != nil {
 		log.Printf("Error in persistence GetEnvironments: cannot run query on bucket %s: %s", "vice-environments", err)
 		return nil, err
@@ -71,7 +75,10 @@ func GetEnvironments() ([]*models.Environment, error) {
 	for rows.Next(&item) {
 		copy := new(models.Environment)
 		*copy = item
-		items = append(items, copy)
+		if item.ID != "" {
+			items = append(items, copy)
+		}
+		item = models.Environment{}
 	}
 	return items, nil
 }

@@ -428,6 +428,11 @@ func init() {
       "get": {
         "summary": "List available images",
         "operationId": "findImages",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "An array of images.",

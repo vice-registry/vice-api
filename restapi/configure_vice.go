@@ -81,7 +81,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewFindEnvironmentUnauthorized()
 		}
-		environments, err := persistence.GetEnvironments()
+		environments, err := persistence.GetEnvironments(principal)
 		if err != nil {
 			return operations.NewFindEnvironmentInternalServerError()
 		}
@@ -147,8 +147,8 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	})
 
 	// Image
-	api.FindImagesHandler = operations.FindImagesHandlerFunc(func(params operations.FindImagesParams) middleware.Responder {
-		images, err := persistence.GetImages()
+	api.FindImagesHandler = operations.FindImagesHandlerFunc(func(params operations.FindImagesParams, principal *models.User) middleware.Responder {
+		images, err := persistence.GetImages(principal)
 		if err != nil {
 			return operations.NewFindImagesInternalServerError()
 		}
@@ -253,7 +253,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewFindDeploymentsUnauthorized()
 		}
-		deployments, err := persistence.GetDeployments()
+		deployments, err := persistence.GetDeployments(principal)
 		if err != nil {
 			return operations.NewFindDeploymentsInternalServerError()
 		}

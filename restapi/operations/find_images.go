@@ -9,19 +9,21 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+
+	"github.com/vice-registry/vice-api/models"
 )
 
 // FindImagesHandlerFunc turns a function with the right signature into a find images handler
-type FindImagesHandlerFunc func(FindImagesParams) middleware.Responder
+type FindImagesHandlerFunc func(FindImagesParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn FindImagesHandlerFunc) Handle(params FindImagesParams) middleware.Responder {
-	return fn(params)
+func (fn FindImagesHandlerFunc) Handle(params FindImagesParams, principal *models.User) middleware.Responder {
+	return fn(params, principal)
 }
 
 // FindImagesHandler interface for that can handle valid find images params
 type FindImagesHandler interface {
-	Handle(FindImagesParams) middleware.Responder
+	Handle(FindImagesParams, *models.User) middleware.Responder
 }
 
 // NewFindImages creates a new http.Handler for the find images operation
@@ -46,12 +48,25 @@ func (o *FindImages) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewFindImagesParams()
 
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.User
+	if uprinc != nil {
+		principal = uprinc.(*models.User) // this is really a models.User, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
