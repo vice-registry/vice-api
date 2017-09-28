@@ -524,6 +524,31 @@ func init() {
           }
         }
       }
+    },
+    "/runtimestats": {
+      "get": {
+        "summary": "Provide internal statistics about import/export queue length and workers",
+        "operationId": "getRuntimeStats",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/RuntimeStats"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -641,6 +666,22 @@ func init() {
         },
         "version": {
           "type": "string"
+        }
+      }
+    },
+    "RuntimeStats": {
+      "properties": {
+        "exportWorker": {
+          "type": "integer"
+        },
+        "exportsPending": {
+          "type": "integer"
+        },
+        "importWorker": {
+          "type": "integer"
+        },
+        "importsPending": {
+          "type": "integer"
         }
       }
     },

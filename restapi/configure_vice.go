@@ -293,6 +293,15 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	// User
 	// TODO
 
+	// RuntimeStats
+	api.GetRuntimeStatsHandler = operations.GetRuntimeStatsHandlerFunc(func(params operations.GetRuntimeStatsParams, principal *models.User) middleware.Responder {
+		if principal == nil {
+			return operations.NewGetRuntimeStatsUnauthorized()
+		}
+		runtimeStats := actions.GetRuntimeStats()
+		return operations.NewGetRuntimeStatsOK().WithPayload(runtimeStats)
+	})
+
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

@@ -69,6 +69,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		GetImageHandler: GetImageHandlerFunc(func(params GetImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation GetImage has not yet been implemented")
 		}),
+		GetRuntimeStatsHandler: GetRuntimeStatsHandlerFunc(func(params GetRuntimeStatsParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation GetRuntimeStats has not yet been implemented")
+		}),
 		UpdateEnvironmentHandler: UpdateEnvironmentHandlerFunc(func(params UpdateEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateEnvironment has not yet been implemented")
 		}),
@@ -128,6 +131,8 @@ type ViceAPI struct {
 	GetEnvironmentHandler GetEnvironmentHandler
 	// GetImageHandler sets the operation handler for the get image operation
 	GetImageHandler GetImageHandler
+	// GetRuntimeStatsHandler sets the operation handler for the get runtime stats operation
+	GetRuntimeStatsHandler GetRuntimeStatsHandler
 	// UpdateEnvironmentHandler sets the operation handler for the update environment operation
 	UpdateEnvironmentHandler UpdateEnvironmentHandler
 	// UpdateImageHandler sets the operation handler for the update image operation
@@ -249,6 +254,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.GetImageHandler == nil {
 		unregistered = append(unregistered, "GetImageHandler")
+	}
+
+	if o.GetRuntimeStatsHandler == nil {
+		unregistered = append(unregistered, "GetRuntimeStatsHandler")
 	}
 
 	if o.UpdateEnvironmentHandler == nil {
@@ -416,6 +425,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/image/{imageId}"] = NewGetImage(o.context, o.GetImageHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/runtimestats"] = NewGetRuntimeStats(o.context, o.GetRuntimeStatsHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)

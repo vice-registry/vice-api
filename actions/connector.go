@@ -72,3 +72,29 @@ func NewImportAction(image *models.Image) {
 func NewExportAction(deployment *models.Deployment) {
 	sendMessage("export", deployment.ID)
 }
+
+func GetRuntimeStats() *models.RuntimeStats {
+	importQueue, err := rabbitmqCredentials.Channel.QueueInspect("import")
+	importMessages := int64(0)
+	importConsumers := int64(0)
+	if err == nil {
+		importMessages = int64(importQueue.Messages)
+		importConsumers = int64(importQueue.Consumers)
+	}
+
+	exportQueue, err := rabbitmqCredentials.Channel.QueueInspect("export")
+	exportMessages := int64(0)
+	exportConsumers := int64(0)
+	if err == nil {
+		exportMessages = int64(exportQueue.Messages)
+		exportConsumers = int64(exportQueue.Consumers)
+	}
+
+	stats := models.RuntimeStats{
+		ExportsPending: exportMessages,
+		ExportWorker:   exportConsumers,
+		ImportsPending: importMessages,
+		ImportWorker:   importConsumers,
+	}
+	return &stats
+}

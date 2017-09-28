@@ -338,6 +338,22 @@ paths:
       security:
         - vice_auth: []
 
+  /runtimestats:
+    get:
+      summary: Provide internal statistics about import/export queue length and workers
+      operationId: getRuntimeStats
+      responses:
+        200:
+          description: successful operation
+          schema:        
+            $ref: "#/definitions/RuntimeStats"
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        500:  
+          description: Internal Server Error
+      security:
+        - vice_auth: []        
+
 securityDefinitions:
   vice_auth:
     type: basic
@@ -431,6 +447,17 @@ definitions:
         type: string
       environmentReference:
         type: string
+
+  RuntimeStats:
+    properties:
+      importsPending:
+        type: integer
+      importWorker:
+        type: integer
+      exportsPending:
+        type: integer
+      exportWorker:
+        type: integer
 
 responses:
   UnauthorizedError:
