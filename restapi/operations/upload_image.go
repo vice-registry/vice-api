@@ -13,40 +13,40 @@ import (
 	"github.com/vice-registry/vice-util/models"
 )
 
-// FindDeploymentsHandlerFunc turns a function with the right signature into a find deployments handler
-type FindDeploymentsHandlerFunc func(FindDeploymentsParams, *models.User) middleware.Responder
+// UploadImageHandlerFunc turns a function with the right signature into a upload image handler
+type UploadImageHandlerFunc func(UploadImageParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn FindDeploymentsHandlerFunc) Handle(params FindDeploymentsParams, principal *models.User) middleware.Responder {
+func (fn UploadImageHandlerFunc) Handle(params UploadImageParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// FindDeploymentsHandler interface for that can handle valid find deployments params
-type FindDeploymentsHandler interface {
-	Handle(FindDeploymentsParams, *models.User) middleware.Responder
+// UploadImageHandler interface for that can handle valid upload image params
+type UploadImageHandler interface {
+	Handle(UploadImageParams, *models.User) middleware.Responder
 }
 
-// NewFindDeployments creates a new http.Handler for the find deployments operation
-func NewFindDeployments(ctx *middleware.Context, handler FindDeploymentsHandler) *FindDeployments {
-	return &FindDeployments{Context: ctx, Handler: handler}
+// NewUploadImage creates a new http.Handler for the upload image operation
+func NewUploadImage(ctx *middleware.Context, handler UploadImageHandler) *UploadImage {
+	return &UploadImage{Context: ctx, Handler: handler}
 }
 
-/*FindDeployments swagger:route GET /deployments findDeployments
+/*UploadImage swagger:route POST /image/{imageId}/file uploadImage
 
-List all deployments of authenticated user
+Upload a file as image
 
 */
-type FindDeployments struct {
+type UploadImage struct {
 	Context *middleware.Context
-	Handler FindDeploymentsHandler
+	Handler UploadImageHandler
 }
 
-func (o *FindDeployments) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *UploadImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewFindDeploymentsParams()
+	var Params = NewUploadImageParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

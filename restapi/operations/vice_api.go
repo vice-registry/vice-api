@@ -19,25 +19,26 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/vice-registry/vice-api/models"
+	"github.com/vice-registry/vice-util/models"
 )
 
 // NewViceAPI creates a new Vice instance
 func NewViceAPI(spec *loads.Document) *ViceAPI {
 	return &ViceAPI{
-		handlers:            make(map[string]map[string]http.Handler),
-		formats:             strfmt.Default,
-		defaultConsumes:     "application/json",
-		defaultProduces:     "application/json",
-		ServerShutdown:      func() {},
-		spec:                spec,
-		ServeError:          errors.ServeError,
-		BasicAuthenticator:  security.BasicAuth,
-		APIKeyAuthenticator: security.APIKeyAuth,
-		BearerAuthenticator: security.BearerAuth,
-		JSONConsumer:        runtime.JSONConsumer(),
-		XMLConsumer:         runtime.XMLConsumer(),
-		JSONProducer:        runtime.JSONProducer(),
+		handlers:              make(map[string]map[string]http.Handler),
+		formats:               strfmt.Default,
+		defaultConsumes:       "application/json",
+		defaultProduces:       "application/json",
+		ServerShutdown:        func() {},
+		spec:                  spec,
+		ServeError:            errors.ServeError,
+		BasicAuthenticator:    security.BasicAuth,
+		APIKeyAuthenticator:   security.APIKeyAuth,
+		BearerAuthenticator:   security.BearerAuth,
+		JSONConsumer:          runtime.JSONConsumer(),
+		XMLConsumer:           runtime.XMLConsumer(),
+		MultipartformConsumer: runtime.DiscardConsumer,
+		JSONProducer:          runtime.JSONProducer(),
 		CreateEnvironmentHandler: CreateEnvironmentHandlerFunc(func(params CreateEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation CreateEnvironment has not yet been implemented")
 		}),
@@ -55,6 +56,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		}),
 		DeployImageHandler: DeployImageHandlerFunc(func(params DeployImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation DeployImage has not yet been implemented")
+		}),
+		DownloadImageHandler: DownloadImageHandlerFunc(func(params DownloadImageParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation DownloadImage has not yet been implemented")
 		}),
 		FindDeploymentsHandler: FindDeploymentsHandlerFunc(func(params FindDeploymentsParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation FindDeployments has not yet been implemented")
@@ -82,6 +86,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		}),
 		UpdateImageHandler: UpdateImageHandlerFunc(func(params UpdateImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateImage has not yet been implemented")
+		}),
+		UploadImageHandler: UploadImageHandlerFunc(func(params UploadImageParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation UploadImage has not yet been implemented")
 		}),
 
 		// Applies when the Authorization header is set with the Basic scheme
@@ -118,6 +125,8 @@ type ViceAPI struct {
 	JSONConsumer runtime.Consumer
 	// XMLConsumer registers a consumer for a "application/xml" mime type
 	XMLConsumer runtime.Consumer
+	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
+	MultipartformConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
@@ -141,6 +150,8 @@ type ViceAPI struct {
 	DeleteImageHandler DeleteImageHandler
 	// DeployImageHandler sets the operation handler for the deploy image operation
 	DeployImageHandler DeployImageHandler
+	// DownloadImageHandler sets the operation handler for the download image operation
+	DownloadImageHandler DownloadImageHandler
 	// FindDeploymentsHandler sets the operation handler for the find deployments operation
 	FindDeploymentsHandler FindDeploymentsHandler
 	// FindEnvironmentHandler sets the operation handler for the find environment operation
@@ -159,6 +170,8 @@ type ViceAPI struct {
 	UpdateEnvironmentHandler UpdateEnvironmentHandler
 	// UpdateImageHandler sets the operation handler for the update image operation
 	UpdateImageHandler UpdateImageHandler
+	// UploadImageHandler sets the operation handler for the upload image operation
+	UploadImageHandler UploadImageHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -222,6 +235,10 @@ func (o *ViceAPI) Validate() error {
 		unregistered = append(unregistered, "XMLConsumer")
 	}
 
+	if o.MultipartformConsumer == nil {
+		unregistered = append(unregistered, "MultipartformConsumer")
+	}
+
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -252,6 +269,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.DeployImageHandler == nil {
 		unregistered = append(unregistered, "DeployImageHandler")
+	}
+
+	if o.DownloadImageHandler == nil {
+		unregistered = append(unregistered, "DownloadImageHandler")
 	}
 
 	if o.FindDeploymentsHandler == nil {
@@ -288,6 +309,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.UpdateImageHandler == nil {
 		unregistered = append(unregistered, "UpdateImageHandler")
+	}
+
+	if o.UploadImageHandler == nil {
+		unregistered = append(unregistered, "UploadImageHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -340,6 +365,9 @@ func (o *ViceAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer 
 
 		case "application/xml":
 			result["application/xml"] = o.XMLConsumer
+
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformConsumer
 
 		}
 	}
@@ -428,6 +456,11 @@ func (o *ViceAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/image/{imageId}/file"] = NewDownloadImage(o.context, o.DownloadImageHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/deployments"] = NewFindDeployments(o.context, o.FindDeploymentsHandler)
 
 	if o.handlers["GET"] == nil {
@@ -469,6 +502,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/images"] = NewUpdateImage(o.context, o.UpdateImageHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/image/{imageId}/file"] = NewUploadImage(o.context, o.UploadImageHandler)
 
 }
 

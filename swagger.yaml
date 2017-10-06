@@ -251,6 +251,58 @@ paths:
       security:
         - vice_auth: []
 
+  /image/{imageId}/file:
+    post:
+      summary: Upload a file as image
+      operationId: uploadImage
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+        - in: path
+          name: imageId
+          required: true
+          type: string          
+      responses:
+        200:
+          description: successful operation
+        400:
+          description:  Bad request
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error            
+      security:
+        - vice_auth: []
+    get:
+      summary: Download a file as image
+      operationId: downloadImage
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          type: string      
+      produces:
+        - application/octet
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: file          
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        404:
+          description: Element not found
+        500:  
+          description: Internal Server Error            
+      security:
+        - vice_auth: []          
+
   /deploy:
     post:
       summary: Create an image into an environment
@@ -459,6 +511,10 @@ definitions:
       exportsPending:
         type: integer
       exportWorker:
+        type: integer
+      storePending:
+        type: integer
+      storeWorker:
         type: integer
 
 responses:

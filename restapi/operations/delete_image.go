@@ -10,7 +10,7 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 
-	"github.com/vice-registry/vice-api/models"
+	"github.com/vice-registry/vice-util/models"
 )
 
 // DeleteImageHandlerFunc turns a function with the right signature into a delete image handler

@@ -13,40 +13,40 @@ import (
 	"github.com/vice-registry/vice-util/models"
 )
 
-// FindDeploymentsHandlerFunc turns a function with the right signature into a find deployments handler
-type FindDeploymentsHandlerFunc func(FindDeploymentsParams, *models.User) middleware.Responder
+// DownloadImageHandlerFunc turns a function with the right signature into a download image handler
+type DownloadImageHandlerFunc func(DownloadImageParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn FindDeploymentsHandlerFunc) Handle(params FindDeploymentsParams, principal *models.User) middleware.Responder {
+func (fn DownloadImageHandlerFunc) Handle(params DownloadImageParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// FindDeploymentsHandler interface for that can handle valid find deployments params
-type FindDeploymentsHandler interface {
-	Handle(FindDeploymentsParams, *models.User) middleware.Responder
+// DownloadImageHandler interface for that can handle valid download image params
+type DownloadImageHandler interface {
+	Handle(DownloadImageParams, *models.User) middleware.Responder
 }
 
-// NewFindDeployments creates a new http.Handler for the find deployments operation
-func NewFindDeployments(ctx *middleware.Context, handler FindDeploymentsHandler) *FindDeployments {
-	return &FindDeployments{Context: ctx, Handler: handler}
+// NewDownloadImage creates a new http.Handler for the download image operation
+func NewDownloadImage(ctx *middleware.Context, handler DownloadImageHandler) *DownloadImage {
+	return &DownloadImage{Context: ctx, Handler: handler}
 }
 
-/*FindDeployments swagger:route GET /deployments findDeployments
+/*DownloadImage swagger:route GET /image/{imageId}/file downloadImage
 
-List all deployments of authenticated user
+Download a file as image
 
 */
-type FindDeployments struct {
+type DownloadImage struct {
 	Context *middleware.Context
-	Handler FindDeploymentsHandler
+	Handler DownloadImageHandler
 }
 
-func (o *FindDeployments) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *DownloadImage) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewFindDeploymentsParams()
+	var Params = NewDownloadImageParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

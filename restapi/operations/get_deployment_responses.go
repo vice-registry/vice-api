@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/vice-registry/vice-api/models"
+	"github.com/vice-registry/vice-util/models"
 )
 
 // GetDeploymentOKCode is the HTTP code returned for type GetDeploymentOK

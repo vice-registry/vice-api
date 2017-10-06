@@ -15,6 +15,7 @@ API endpoint of the ViCE Image Registry: search, deploy, and import virtual envi
     Consumes:
     - application/json
     - application/xml
+    - multipart/form-data
 
     Produces:
     - application/json

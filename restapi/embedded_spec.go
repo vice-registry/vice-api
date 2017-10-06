@@ -424,6 +424,88 @@ func init() {
         }
       }
     },
+    "/image/{imageId}/file": {
+      "get": {
+        "produces": [
+          "application/octet"
+        ],
+        "summary": "Download a file as image",
+        "operationId": "downloadImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "summary": "Upload a file as image",
+        "operationId": "uploadImage",
+        "security": [
+          {
+            "vice_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "file",
+            "description": "The file to upload.",
+            "name": "upfile",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "name": "imageId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "$ref": "#/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Element not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/images": {
       "get": {
         "summary": "List available images",
@@ -688,6 +770,12 @@ func init() {
           "type": "integer"
         },
         "importsPending": {
+          "type": "integer"
+        },
+        "storePending": {
+          "type": "integer"
+        },
+        "storeWorker": {
           "type": "integer"
         }
       }

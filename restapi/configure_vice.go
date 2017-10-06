@@ -12,10 +12,11 @@ import (
 
 	cors "github.com/rs/cors"
 
-	"github.com/vice-registry/vice-api/actions"
-	"github.com/vice-registry/vice-api/models"
-	"github.com/vice-registry/vice-api/persistence"
 	"github.com/vice-registry/vice-api/restapi/operations"
+	"github.com/vice-registry/vice-util/communication"
+	"github.com/vice-registry/vice-util/models"
+	"github.com/vice-registry/vice-util/persistence"
+	"github.com/vice-registry/vice-util/storeclient"
 )
 
 // CouchbaseFlags cli Configuration options for couchbase connection
@@ -56,7 +57,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	persistence.InitViceCouchbase()
 
 	// initialize rabbitmq
-	actions.SetRabbitmqCredentials(RabbitmqFlags.Location, RabbitmqFlags.Username, RabbitmqFlags.Password)
+	communication.SetRabbitmqCredentials(RabbitmqFlags.Location, RabbitmqFlags.Username, RabbitmqFlags.Password)
 
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.XMLConsumer = runtime.XMLConsumer()
@@ -164,7 +165,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewCreateImageInternalServerError()
 		}
 		// send import action
-		actions.NewImportAction(image)
+		communication.NewImportAction(image)
 		return operations.NewCreateImageCreated().WithPayload(image)
 	})
 	api.UpdateImageHandler = operations.UpdateImageHandlerFunc(func(params operations.UpdateImageParams, principal *models.User) middleware.Responder {
@@ -184,7 +185,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewUpdateImageInternalServerError()
 		}
 		// send import action
-		actions.NewImportAction(image)
+		communication.NewImportAction(image)
 		return operations.NewUpdateImageCreated().WithPayload(image)
 	})
 	api.GetImageHandler = operations.GetImageHandlerFunc(func(params operations.GetImageParams, principal *models.User) middleware.Responder {
@@ -217,6 +218,40 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		}
 		return operations.NewDeleteImageOK()
 	})
+	api.UploadImageHandler = operations.UploadImageHandlerFunc(func(params operations.UploadImageParams, principal *models.User) middleware.Responder {
+		if principal == nil {
+			return operations.NewUploadImageUnauthorized()
+		}
+		image, err := persistence.GetImage(params.ImageID)
+		if err != nil {
+			return operations.NewUploadImageNotFound()
+		}
+		if image.Userid != principal.ID {
+			return operations.NewUploadImageUnauthorized()
+		}
+		if params.Upfile == nil {
+			return operations.NewUploadImageBadRequest()
+		}
+		err = storeclient.NewStoreRequest(image, params.Upfile.Data)
+		if err != nil {
+			return operations.NewUploadImageInternalServerError()
+		}
+		return operations.NewUploadImageOK()
+	})
+	api.DownloadImageHandler = operations.DownloadImageHandlerFunc(func(params operations.DownloadImageParams, principal *models.User) middleware.Responder {
+		if principal == nil {
+			return operations.NewDownloadImageUnauthorized()
+		}
+		image, err := persistence.GetImage(params.ImageID)
+		if err != nil {
+			return operations.NewDownloadImageNotFound()
+		}
+		if image.Userid != principal.ID {
+			return operations.NewDownloadImageUnauthorized()
+		}
+
+		return operations.NewDownloadImageOK()
+	})
 
 	// Deployment
 	api.DeployImageHandler = operations.DeployImageHandlerFunc(func(params operations.DeployImageParams, principal *models.User) middleware.Responder {
@@ -245,7 +280,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewDeployImageInternalServerError()
 		}
 		// send deployment action
-		actions.NewExportAction(deployment)
+		communication.NewExportAction(deployment)
 
 		return operations.NewDeployImageCreated().WithPayload(deployment)
 	})
@@ -298,7 +333,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewGetRuntimeStatsUnauthorized()
 		}
-		runtimeStats := actions.GetRuntimeStats()
+		runtimeStats := communication.GetRuntimeStats()
 		return operations.NewGetRuntimeStatsOK().WithPayload(runtimeStats)
 	})
 
