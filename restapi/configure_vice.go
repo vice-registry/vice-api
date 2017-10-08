@@ -365,8 +365,11 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	//handleCORS := cors.Default().Handler
 	handleCORS := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://petstore.swagger.io", "http://localhost"},
-		AllowCredentials: true,
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type"},
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "OPTIONS", "POST", "PUT", "DELETE"},
+		MaxAge:         1000,
+		Debug:          true,
 	}).Handler
 	return handleCORS(handler)
 }
