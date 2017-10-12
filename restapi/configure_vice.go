@@ -326,7 +326,20 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	})
 
 	// User
-	// TODO
+	api.GetUserHandler = operations.GetUserHandlerFunc(func(params operations.GetUserParams, principal *models.User) middleware.Responder {
+		if principal == nil {
+			return operations.NewGetUserUnauthorized()
+		}
+		return operations.NewGetUserOK().WithPayload(principal)
+	})
+	api.CreateUserHandler = operations.CreateUserHandlerFunc(func(params operations.CreateUserParams) middleware.Responder {
+		// store user in couchbase
+		user, err := persistence.CreateUser(params.Body)
+		if err != nil {
+			return operations.NewCreateUserInternalServerError()
+		}
+		return operations.NewCreateUserOK().WithPayload(user)
+	})
 
 	// RuntimeStats
 	api.GetRuntimeStatsHandler = operations.GetRuntimeStatsHandlerFunc(func(params operations.GetRuntimeStatsParams, principal *models.User) middleware.Responder {

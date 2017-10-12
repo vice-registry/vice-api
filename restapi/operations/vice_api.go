@@ -45,6 +45,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		CreateImageHandler: CreateImageHandlerFunc(func(params CreateImageParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation CreateImage has not yet been implemented")
 		}),
+		CreateUserHandler: CreateUserHandlerFunc(func(params CreateUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation CreateUser has not yet been implemented")
+		}),
 		DeleteDeploymentHandler: DeleteDeploymentHandlerFunc(func(params DeleteDeploymentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteDeployment has not yet been implemented")
 		}),
@@ -80,6 +83,9 @@ func NewViceAPI(spec *loads.Document) *ViceAPI {
 		}),
 		GetRuntimeStatsHandler: GetRuntimeStatsHandlerFunc(func(params GetRuntimeStatsParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation GetRuntimeStats has not yet been implemented")
+		}),
+		GetUserHandler: GetUserHandlerFunc(func(params GetUserParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation GetUser has not yet been implemented")
 		}),
 		UpdateEnvironmentHandler: UpdateEnvironmentHandlerFunc(func(params UpdateEnvironmentParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateEnvironment has not yet been implemented")
@@ -142,6 +148,8 @@ type ViceAPI struct {
 	CreateEnvironmentHandler CreateEnvironmentHandler
 	// CreateImageHandler sets the operation handler for the create image operation
 	CreateImageHandler CreateImageHandler
+	// CreateUserHandler sets the operation handler for the create user operation
+	CreateUserHandler CreateUserHandler
 	// DeleteDeploymentHandler sets the operation handler for the delete deployment operation
 	DeleteDeploymentHandler DeleteDeploymentHandler
 	// DeleteEnvironmentHandler sets the operation handler for the delete environment operation
@@ -166,6 +174,8 @@ type ViceAPI struct {
 	GetImageHandler GetImageHandler
 	// GetRuntimeStatsHandler sets the operation handler for the get runtime stats operation
 	GetRuntimeStatsHandler GetRuntimeStatsHandler
+	// GetUserHandler sets the operation handler for the get user operation
+	GetUserHandler GetUserHandler
 	// UpdateEnvironmentHandler sets the operation handler for the update environment operation
 	UpdateEnvironmentHandler UpdateEnvironmentHandler
 	// UpdateImageHandler sets the operation handler for the update image operation
@@ -255,6 +265,10 @@ func (o *ViceAPI) Validate() error {
 		unregistered = append(unregistered, "CreateImageHandler")
 	}
 
+	if o.CreateUserHandler == nil {
+		unregistered = append(unregistered, "CreateUserHandler")
+	}
+
 	if o.DeleteDeploymentHandler == nil {
 		unregistered = append(unregistered, "DeleteDeploymentHandler")
 	}
@@ -301,6 +315,10 @@ func (o *ViceAPI) Validate() error {
 
 	if o.GetRuntimeStatsHandler == nil {
 		unregistered = append(unregistered, "GetRuntimeStatsHandler")
+	}
+
+	if o.GetUserHandler == nil {
+		unregistered = append(unregistered, "GetUserHandler")
 	}
 
 	if o.UpdateEnvironmentHandler == nil {
@@ -433,6 +451,11 @@ func (o *ViceAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/images"] = NewCreateImage(o.context, o.CreateImageHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/user"] = NewCreateUser(o.context, o.CreateUserHandler)
+
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -492,6 +515,11 @@ func (o *ViceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/runtimestats"] = NewGetRuntimeStats(o.context, o.GetRuntimeStatsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/user"] = NewGetUser(o.context, o.GetUserHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
