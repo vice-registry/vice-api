@@ -22,3 +22,6 @@ swagger generate server -A vice-api -f swagger.yaml --principal models.User --sk
 # remove generated main.go, we will work with a copy...
 rm cmd/vice-server/main.go -r
 rm cmd/ -r
+
+# export typescript-angular2 services and models
+java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular2 -o ../vice-webui/src/app/vice-api/
