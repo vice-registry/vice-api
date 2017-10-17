@@ -455,6 +455,8 @@ definitions:
     properties:
       id:
         type: string    
+      title:
+        type: string            
       userid:
         type: string
       credentials:
@@ -513,12 +515,14 @@ definitions:
     properties:
       id:
         type: string
+      title:
+        type: string
       userid:
         type: string
-      image-type:
+      imagetype:
         type: string
         enum: [implicit, declarative]
-      content-type:
+      contenttype:
         type: string
         enum: [disk-raw, disk-qcow2, disk-vmdk, docker-file, docker-image, packerfile]
       imported:
@@ -535,6 +539,8 @@ definitions:
     properties:
       id:
         type: string
+      title:
+        type: string        
       userid:
         type: string
       imageid:

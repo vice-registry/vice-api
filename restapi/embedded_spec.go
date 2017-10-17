@@ -730,6 +730,9 @@ func init() {
         "imageid": {
           "type": "string"
         },
+        "title": {
+          "type": "string"
+        },
         "userid": {
           "type": "string"
         }
@@ -749,6 +752,9 @@ func init() {
         "runtimetechnology": {
           "$ref": "#/definitions/RuntimeTechnology"
         },
+        "title": {
+          "type": "string"
+        },
         "userid": {
           "type": "string"
         }
@@ -757,7 +763,7 @@ func init() {
     "Image": {
       "type": "object",
       "properties": {
-        "content-type": {
+        "contenttype": {
           "type": "string",
           "enum": [
             "disk-raw",
@@ -774,7 +780,7 @@ func init() {
         "id": {
           "type": "string"
         },
-        "image-type": {
+        "imagetype": {
           "type": "string",
           "enum": [
             "implicit",
@@ -789,6 +795,9 @@ func init() {
         },
         "specifics": {
           "type": "object"
+        },
+        "title": {
+          "type": "string"
         },
         "userid": {
           "type": "string"
