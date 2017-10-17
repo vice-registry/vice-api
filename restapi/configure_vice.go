@@ -92,6 +92,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewCreateEnvironmentUnauthorized()
 		}
+		params.Body.Userid = principal.ID // force userid
 		environment, err := persistence.CreateEnvironment(params.Body)
 		if err != nil {
 			return operations.NewCreateEnvironmentInternalServerError()
@@ -102,6 +103,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewUpdateEnvironmentUnauthorized()
 		}
+		params.Body.Userid = principal.ID // force userid
 		environment, err := persistence.GetEnvironment(params.Body.ID)
 		if err != nil {
 			return operations.NewUpdateEnvironmentNotFound()
@@ -160,6 +162,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewCreateImageUnauthorized()
 		}
 		// store image in couchbase
+		params.Body.Userid = principal.ID // force userid
 		image, err := persistence.CreateImage(params.Body)
 		if err != nil {
 			return operations.NewCreateImageInternalServerError()
@@ -172,6 +175,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 		if principal == nil {
 			return operations.NewUpdateImageUnauthorized()
 		}
+		params.Body.Userid = principal.ID // force userid
 		image, err := persistence.GetImage(params.Body.ID)
 		if err != nil {
 			return operations.NewUpdateImageNotFound()
@@ -275,6 +279,7 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 			return operations.NewDeployImageUnauthorized()
 		}
 		// store deployment in couchbase
+		params.Body.Userid = principal.ID // force userid
 		deployment, err := persistence.CreateDeployment(params.Body)
 		if err != nil {
 			return operations.NewDeployImageInternalServerError()
