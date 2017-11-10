@@ -20,10 +20,17 @@ import (
 )
 
 // CouchbaseFlags cli Configuration options for couchbase connection
-var CouchbaseFlags = struct {
+/*var CouchbaseFlags = struct {
 	Location string `short:"c" long:"couchbase-location" description:"Location of the Couchbase cluster to connect to (e.g. localhost)"`
 	Username string `short:"u" long:"couchbase-user" description:"Username to log in to Couchbase cluster"`
 	Password string `short:"p" long:"couchbase-pass" description:"Password to log in to Couchbase cluster"`
+}{}*/
+//
+
+// RethinkdbFlags  Configuration options for rethinkdb connection
+var RethinkdbFlags = struct {
+	Location string `short:"c" long:"rethinkdb-location" description:"Location of the RethinkDB cluster to connect to (e.g. localhost)"`
+	Database string `short:"d" long:"rethinkdb-database" description:"Database Name of RethinkDB cluster to use (e.g. vice)"`
 }{}
 
 // RabbitmqFlags cli Configuration options for rabbitmq connection
@@ -35,10 +42,15 @@ var RabbitmqFlags = struct {
 
 func configureFlags(api *operations.ViceAPI) {
 	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
-		swag.CommandLineOptionsGroup{
+		/*swag.CommandLineOptionsGroup{
 			ShortDescription: "Couchbase Connection",
 			LongDescription:  "Configuration options for couchbase connection",
 			Options:          &CouchbaseFlags,
+		},*/
+		swag.CommandLineOptionsGroup{
+			ShortDescription: "RethinkDB Connection",
+			LongDescription:  "Configuration options for RethinkDB connection",
+			Options:          &RethinkdbFlags,
 		},
 		swag.CommandLineOptionsGroup{
 			ShortDescription: "RabbitMQ Connection",
@@ -53,8 +65,9 @@ func configureAPI(api *operations.ViceAPI) http.Handler {
 	api.ServeError = errors.ServeError
 
 	// initialize couchbase
-	persistence.SetCouchbaseCredentials(CouchbaseFlags.Location, CouchbaseFlags.Username, CouchbaseFlags.Password)
-	persistence.InitViceCouchbase()
+	//persistence.SetCouchbaseCredentials(CouchbaseFlags.Location, CouchbaseFlags.Username, CouchbaseFlags.Password)
+	persistence.SetConnectionProperties(RethinkdbFlags.Location, RethinkdbFlags.Database)
+	persistence.InitDatabase()
 
 	// initialize rabbitmq
 	communication.SetRabbitmqCredentials(RabbitmqFlags.Location, RabbitmqFlags.Username, RabbitmqFlags.Password)
