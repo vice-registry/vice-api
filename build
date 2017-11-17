@@ -2,7 +2,7 @@
 
 #save paths
 currentpath=$(pwd)
-export GOPATH=$(cd ../../../../; pwd)
+[ -n "${GOPATH}" ] || export GOPATH=$(cd ../../../../; pwd)
 
 # compile go app
 cd $GOPATH
@@ -14,5 +14,9 @@ cd $currentpath
 docker build -t vice-api .
 rm vice-api
 
+# overwrite dockerhub image
+#docker tag vice-api:latest viceregistry/vice-api:latest
+
 # upload docker image
 # todo
+
