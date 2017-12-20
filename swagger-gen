@@ -25,3 +25,7 @@ rm cmd/ -r
 
 # export typescript-angular2 services and models
 java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular2 -o ../vice-webui/src/app/api/
+
+# export API docs
+java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l html -o ../vice-registry/docs/api/
+
